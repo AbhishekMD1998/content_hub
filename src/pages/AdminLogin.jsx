@@ -29,8 +29,8 @@ export default function AdminLogin() {
   return (
     <div className="page auth-page">
       <div className="auth-card">
-        <h1>Admin sign in</h1>
-        <p className="lead">Only administrators can upload and manage blogs.</p>
+        <h1>Sign in</h1>
+        <p className="lead">Upload and manage blogs.</p>
         <form onSubmit={handleSubmit} className="admin-form">
           <label>
             Email
