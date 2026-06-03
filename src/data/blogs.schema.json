@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Content Hub blogs",
+  "description": "Developer-edited blog posts. Add objects to the blogs array in blogs.json.",
+  "type": "object",
+  "required": ["blogs"],
+  "properties": {
+    "blogs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/blog" }
+    }
+  },
+  "$defs": {
+    "blog": {
+      "type": "object",
+      "required": ["id", "title", "excerpt", "author", "category", "createdAt"],
+      "properties": {
+        "id": { "type": "string", "description": "Unique slug-style id used in /blogs/:id" },
+        "source": { "const": "json", "description": "Marks posts shipped from JSON (read-only in admin)" },
+        "title": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "author": { "type": "string" },
+        "category": { "type": "string" },
+        "readTime": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "coverImage": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "content": { "type": "string", "description": "Legacy plain text (optional if blocks provided)" },
+        "blocks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/block" }
+        }
+      }
+    },
+    "block": {
+      "oneOf": [
+        { "$ref": "#/$defs/intro" },
+        { "$ref": "#/$defs/heading" },
+        { "$ref": "#/$defs/paragraph" },
+        { "$ref": "#/$defs/image" },
+        { "$ref": "#/$defs/list" },
+        { "$ref": "#/$defs/callout" },
+        { "$ref": "#/$defs/divider" }
+      ]
+    },
+    "intro": {
+      "type": "object",
+      "required": ["type", "text"],
+      "properties": {
+        "type": { "const": "intro" },
+        "text": { "type": "string" }
+      }
+    },
+    "heading": {
+      "type": "object",
+      "required": ["type", "level", "text"],
+      "properties": {
+        "type": { "const": "heading" },
+        "level": { "enum": [2, 3] },
+        "id": { "type": "string" },
+        "text": { "type": "string" }
+      }
+    },
+    "paragraph": {
+      "type": "object",
+      "required": ["type", "text"],
+      "properties": {
+        "type": { "const": "paragraph" },
+        "text": { "type": "string" }
+      }
+    },
+    "image": {
+      "type": "object",
+      "required": ["type", "src", "alt"],
+      "properties": {
+        "type": { "const": "image" },
+        "src": { "type": "string" },
+        "alt": { "type": "string" },
+        "caption": { "type": "string" }
+      }
+    },
+    "list": {
+      "type": "object",
+      "required": ["type", "items"],
+      "properties": {
+        "type": { "const": "list" },
+        "style": { "enum": ["ordered", "unordered"] },
+        "items": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "callout": {
+      "type": "object",
+      "required": ["type", "text"],
+      "properties": {
+        "type": { "const": "callout" },
+        "variant": { "enum": ["insight", "action", "tip"] },
+        "title": { "type": "string" },
+        "text": { "type": "string" }
+      }
+    },
+    "divider": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "divider" }
+      }
+    }
+  }
+}

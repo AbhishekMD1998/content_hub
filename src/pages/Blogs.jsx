@@ -12,14 +12,14 @@ export default function Blogs() {
       <header className="page-header">
         <h1>Blogs</h1>
         <p className="lead">
-          Posts uploaded and managed by administrators.
+          Long-form stories from JSON content and admin uploads—crafted for focused reading.
         </p>
       </header>
 
       {sorted.length === 0 ? (
         <p className="empty-state">No blogs published yet.</p>
       ) : (
-        <div className="card-grid">
+        <div className="card-grid blogs-grid">
           {sorted.map((blog) => (
             <PostCard
               key={blog.id}
@@ -30,6 +30,8 @@ export default function Blogs() {
               date={blog.createdAt}
               to={`/blogs/${blog.id}`}
               badge="Blog"
+              coverImage={blog.coverImage}
+              readTime={blog.readTime}
             />
           ))}
         </div>

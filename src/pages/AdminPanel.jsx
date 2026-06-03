@@ -11,7 +11,8 @@ const emptyForm = {
 };
 
 export default function AdminPanel() {
-  const { blogs, addBlog, deleteBlog } = useContent();
+  const { blogs, addBlog, deleteBlog, isJsonBlog } = useContent();
+  const adminBlogs = blogs.filter((b) => !isJsonBlog(b));
   const [form, setForm] = useState(emptyForm);
   const [message, setMessage] = useState('');
 
@@ -48,7 +49,10 @@ export default function AdminPanel() {
     <div className="page admin-page">
       <header className="page-header">
         <h1>Admin panel</h1>
-        <p className="lead">Upload and manage blog posts.</p>
+        <p className="lead">
+          Upload admin posts here. Developer blogs live in{' '}
+          <code>src/data/blogs.json</code>.
+        </p>
       </header>
 
       {message && (
@@ -116,12 +120,16 @@ export default function AdminPanel() {
         </section>
 
         <section className="admin-list-section">
-          <h2>Published blogs ({blogs.length})</h2>
-          {blogs.length === 0 ? (
-            <p className="empty-state">No blogs yet.</p>
+          <h2>Admin posts ({adminBlogs.length})</h2>
+          <p className="admin-json-note">
+            JSON blogs ({blogs.length - adminBlogs.length}) are edited in{' '}
+            <code>src/data/blogs.json</code> and cannot be deleted here.
+          </p>
+          {adminBlogs.length === 0 ? (
+            <p className="empty-state">No admin posts yet.</p>
           ) : (
             <ul className="admin-blog-list">
-              {[...blogs]
+              {[...adminBlogs]
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                 .map((blog) => (
                   <li key={blog.id}>

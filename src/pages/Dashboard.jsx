@@ -92,6 +92,8 @@ export default function Dashboard() {
                 date={blog.createdAt}
                 to={`/blogs/${blog.id}`}
                 badge="Blog"
+                coverImage={blog.coverImage}
+                readTime={blog.readTime}
               />
             ))}
           </div>
