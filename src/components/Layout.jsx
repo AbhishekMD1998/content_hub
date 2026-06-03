@@ -40,7 +40,7 @@ export default function Layout() {
               </>
             ) : (
               <NavLink to="/admin/login" className="btn btn-primary btn-pill">
-                Admin sign in
+                Sign in
               </NavLink>
             )}
           </div>
