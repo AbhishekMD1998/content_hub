@@ -40,6 +40,7 @@
         { "$ref": "#/$defs/image" },
         { "$ref": "#/$defs/list" },
         { "$ref": "#/$defs/callout" },
+        { "$ref": "#/$defs/sticker" },
         { "$ref": "#/$defs/divider" }
       ]
     },
@@ -96,6 +97,16 @@
         "variant": { "enum": ["insight", "action", "tip"] },
         "title": { "type": "string" },
         "text": { "type": "string" }
+      }
+    },
+    "sticker": {
+      "type": "object",
+      "required": ["type", "emoji"],
+      "properties": {
+        "type": { "const": "sticker" },
+        "emoji": { "type": "string" },
+        "label": { "type": "string" },
+        "description": { "type": "string" }
       }
     },
     "divider": {

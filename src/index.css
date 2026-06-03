@@ -1260,6 +1260,31 @@ code {
   margin: 2.5rem 0;
 }
 
+.blog-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.25rem 0 1.75rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, var(--green-50), #fff);
+  border: 1px dashed var(--green-100);
+  box-shadow: var(--shadow-sm);
+}
+
+.blog-sticker-emoji {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.blog-sticker-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green-700);
+}
+
 /* Featured blog cards */
 .post-card-featured {
   padding: 0;

@@ -56,6 +56,16 @@ function Block({ block }) {
         </aside>
       );
 
+    case 'sticker':
+      return (
+        <div className="blog-sticker" role="img" aria-label={block.description || block.label}>
+          <span className="blog-sticker-emoji" aria-hidden="true">
+            {block.emoji}
+          </span>
+          {block.label && <span className="blog-sticker-label">{block.label}</span>}
+        </div>
+      );
+
     case 'divider':
       return <hr className="blog-divider" />;
 
