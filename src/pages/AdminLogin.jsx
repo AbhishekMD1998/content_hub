@@ -1,24 +1,30 @@
 import { useState } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function AdminLogin() {
-  const { isAdmin, login } = useAuth();
+  const { isAuthenticated, login, signup } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/admin';
 
+  const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState('');
 
-  if (isAdmin) {
-    return <Navigate to="/admin" replace />;
+  if (isAuthenticated) {
+    return <Navigate to={from} replace />;
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = login(email.trim(), password);
+    setError('');
+    const result =
+      mode === 'login'
+        ? await login(email.trim(), password)
+        : await signup(email.trim(), password, displayName.trim());
     if (result.ok) {
       navigate(from, { replace: true });
     } else {
@@ -28,17 +34,55 @@ export default function AdminLogin() {
 
   return (
     <div className="page auth-page">
-      <div className="auth-card">
-        <h1>Sign in</h1>
-        <p className="lead">Upload and manage blogs.</p>
+      <div className="auth-card auth-card-wide">
+        <h1>{mode === 'login' ? 'Sign in' : 'Create account'}</h1>
+        <p className="lead">
+          Use email and password or continue with Google. Accounts are stored in Supabase
+          PostgreSQL via the Spring Boot API.
+        </p>
+
+        <div className="auth-tabs">
+          <button
+            type="button"
+            className={mode === 'login' ? 'auth-tab active' : 'auth-tab'}
+            onClick={() => setMode('login')}
+          >
+            Sign in
+          </button>
+          <button
+            type="button"
+            className={mode === 'signup' ? 'auth-tab active' : 'auth-tab'}
+            onClick={() => setMode('signup')}
+          >
+            Sign up
+          </button>
+        </div>
+
+        <a href="/oauth2/authorization/google" className="btn btn-outline btn-pill btn-google">
+          Continue with Google
+        </a>
+
+        <p className="auth-divider">or</p>
+
         <form onSubmit={handleSubmit} className="admin-form">
+          {mode === 'signup' && (
+            <label>
+              Display name
+              <input
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Your name"
+              />
+            </label>
+          )}
           <label>
             Email
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@contenthub.com"
+              placeholder="you@example.com"
               required
               autoComplete="username"
             />
@@ -50,16 +94,28 @@ export default function AdminLogin() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              autoComplete="current-password"
+              minLength={6}
+              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
             />
           </label>
-          {error && <p className="form-error" role="alert">{error}</p>}
-          <button type="submit" className="btn btn-primary">
-            Sign in
+          {error && (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          )}
+          <button type="submit" className="btn btn-primary btn-pill">
+            {mode === 'login' ? 'Sign in' : 'Create account'}
           </button>
         </form>
+
+        {mode === 'login' && (
+          <p className="auth-hint">
+            Default admin: <code>admin@contenthub.com</code> / <code>admin123</code>
+          </p>
+        )}
+
         <p className="auth-hint">
-          Demo credentials: <code>admin@contenthub.com</code> / <code>admin123</code>
+          <Link to="/">← Back to dashboard</Link>
         </p>
       </div>
     </div>

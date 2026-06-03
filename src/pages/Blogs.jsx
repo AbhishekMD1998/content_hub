@@ -1,26 +1,32 @@
-import { useContent } from '../context/ContentContext';
 import PostCard from '../components/PostCard';
+import { useContent } from '../context/ContentContext';
 
 export default function Blogs() {
-  const { blogs } = useContent();
-  const sorted = [...blogs].sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
-  );
+  const { blogs, loading, error } = useContent();
 
   return (
     <div className="page">
       <header className="page-header">
         <h1>Blogs</h1>
         <p className="lead">
-          Long-form stories from JSON content and admin uploads—crafted for focused reading.
+          Long-form posts from the database—seeded JSON content and admin-published posts.
         </p>
       </header>
 
-      {sorted.length === 0 ? (
+      {loading && <p className="empty-state">Loading blogs…</p>}
+      {error && (
+        <p className="empty-state" role="alert">
+          Could not load blogs. Is the backend running on port 8080? ({error})
+        </p>
+      )}
+
+      {!loading && !error && blogs.length === 0 && (
         <p className="empty-state">No blogs published yet.</p>
-      ) : (
+      )}
+
+      {!loading && !error && blogs.length > 0 && (
         <div className="card-grid blogs-grid">
-          {sorted.map((blog) => (
+          {blogs.map((blog) => (
             <PostCard
               key={blog.id}
               title={blog.title}

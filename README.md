@@ -1,74 +1,113 @@
 # Content Hub
 
-A React dashboard for **blogs** (uploaded by admins) and **articles** (curated editorial content).
+React dashboard with a **Spring Boot** API and **Supabase PostgreSQL** for auth, articles, and blogs.
 
-## Run locally
+## Architecture
+
+| Layer | Stack |
+|-------|--------|
+| Frontend | React + Vite (port 5173) |
+| Backend | Spring Boot 3 + JWT + Google OAuth2 (port 8080) |
+| Database | PostgreSQL on [Supabase](https://supabase.com) |
+
+## 1. Supabase setup
+
+1. Create a project at [supabase.com](https://supabase.com).
+2. Open **SQL Editor** and run the script in [`supabase/schema.sql`](supabase/schema.sql) (creates `users`, `articles`, `blogs` tables).
+3. Copy database credentials from **Project Settings → Database**:
+   - Host, database `postgres`, user `postgres`, password, port `5432`
+   - Use **connection string** with `?sslmode=require` for the JDBC URL.
+
+## 2. Backend setup
 
 ```bash
-cd Projects/content-hub
+cd backend
+cp .env.example .env
+# Edit .env with Supabase DATABASE_URL, JWT_SECRET, optional Google OAuth keys
+```
+
+**`.env` example (Supabase):**
+
+```env
+DATABASE_URL=jdbc:postgresql://db.YOUR_REF.supabase.co:5432/postgres?sslmode=require
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=your_password
+JWT_SECRET=use-a-random-string-at-least-32-characters-long
+FRONTEND_URL=http://localhost:5173
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+GOOGLE_CLIENT_ID=optional
+GOOGLE_CLIENT_SECRET=optional
+```
+
+Run the API:
+
+```bash
+cd backend
+./mvnw spring-boot:run
+# or: mvn spring-boot:run
+```
+
+On first start, Flyway creates tables and the app **seeds** articles + blogs from `backend/src/main/resources/seed/blogs.json`.
+
+**Default admin user:**
+
+| Email | Password |
+|-------|----------|
+| `admin@contenthub.com` | `admin123` |
+
+## 3. Google sign-in (optional)
+
+1. [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials → OAuth client (Web).
+2. **Authorized redirect URI:** `http://localhost:8080/login/oauth2/code/google`
+3. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `backend/.env`.
+4. In the app, use **Continue with Google** on the sign-in page.
+
+## 4. Frontend setup
+
+```bash
 npm install
 npm run dev
 ```
 
-Open the URL shown in the terminal (usually http://localhost:5173).
+Vite proxies `/api`, `/oauth2`, and `/login` to `http://localhost:8080`.
 
-## Features
+Open [http://localhost:5173](http://localhost:5173).
 
-- **Dashboard** — stats and recent blogs/articles
-- **Blogs** — developer JSON posts (`src/data/blogs.json`) plus admin uploads (`localStorage`)
-- **Articles** — static sample content in `src/data/articles.js`
-- **Admin panel** — sign in and publish/delete admin blogs
+## API endpoints
 
-## Adding blogs as a developer
+| Method | Path | Auth |
+|--------|------|------|
+| POST | `/api/auth/signup` | Public |
+| POST | `/api/auth/login` | Public |
+| GET | `/api/auth/me` | Bearer JWT |
+| GET | `/api/articles` | Public |
+| GET | `/api/articles/{slug}` | Public |
+| GET | `/api/blogs` | Public |
+| GET | `/api/blogs/{slug}` | Public |
+| POST | `/api/blogs` | JWT |
+| DELETE | `/api/blogs/{slug}` | JWT |
+| GET | `/oauth2/authorization/google` | Public (if Google configured) |
 
-Edit **`src/data/blogs.json`**. Each entry in the `blogs` array supports structured `blocks` (headings, paragraphs, images, lists, callouts). See **`src/data/blogs.schema.json`** for the full shape.
+## Adding blog content (developers)
 
-```json
-{
-  "id": "my-new-post",
-  "source": "json",
-  "title": "Post title",
-  "excerpt": "Short summary for cards",
-  "author": "Your Name",
-  "category": "Productivity",
-  "readTime": "8 min",
-  "createdAt": "2026-06-03T08:00:00.000Z",
-  "coverImage": "/blog/cover.jpg",
-  "tags": ["habits"],
-  "blocks": [
-    { "type": "intro", "text": "Opening hook…" },
-    { "type": "heading", "level": 2, "id": "section-one", "text": "Section title" },
-    { "type": "paragraph", "text": "Body copy…" },
-    { "type": "image", "src": "/blog/photo.jpg", "alt": "Description", "caption": "Optional caption" },
-    { "type": "callout", "variant": "insight", "title": "Quick takeaway", "text": "…" }
-  ]
-}
-```
+Seed file: `backend/src/main/resources/seed/blogs.json` (loaded into Postgres on empty DB).
 
-After saving, restart `npm run dev` if hot reload does not pick up JSON changes.
-
-## Admin login (demo)
-
-| Field    | Value                 |
-|----------|-----------------------|
-| Email    | `admin@contenthub.com` |
-| Password | `admin123`            |
-
-> For production, replace client-side auth with a real backend API.
+For reference, the frontend block schema lives in `src/data/blogs.schema.json`.
 
 ## Project structure
 
 ```
-src/
-  pages/          # Dashboard, Blogs, Articles, Admin
-  components/     # Layout, cards, protected routes
-  context/        # Auth + blog storage
-  data/           # Seed blogs and static articles
+content-hub/
+  backend/           # Spring Boot API
+  supabase/          # SQL for Supabase dashboard
+  src/               # React app
+    api/             # fetch clients
+    context/         # auth, articles, blogs state
 ```
 
 ## Build
 
 ```bash
 npm run build
-npm run preview
+cd backend && mvn package -DskipTests
 ```

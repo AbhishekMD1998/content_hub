@@ -15,33 +15,44 @@ export default function AdminPanel() {
   const adminBlogs = blogs.filter((b) => !isJsonBlog(b));
   const [form, setForm] = useState(emptyForm);
   const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.title.trim() || !form.content.trim()) {
       setMessage('Title and content are required.');
       return;
     }
-    const blog = addBlog({
-      title: form.title.trim(),
-      excerpt: form.excerpt.trim() || form.content.slice(0, 120) + '…',
-      author: form.author.trim() || 'Admin',
-      category: form.category.trim() || 'General',
-      content: form.content.trim(),
-    });
-    setForm(emptyForm);
-    setMessage(`Published “${blog.title}”.`);
+    setSubmitting(true);
+    try {
+      const blog = await addBlog({
+        title: form.title.trim(),
+        excerpt: form.excerpt.trim() || `${form.content.trim().slice(0, 120)}…`,
+        author: form.author.trim() || 'Admin',
+        category: form.category.trim() || 'General',
+        content: form.content.trim(),
+      });
+      setForm(emptyForm);
+      setMessage(`Published “${blog.title}”.`);
+    } catch (err) {
+      setMessage(err.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleDelete = (id, title) => {
-    if (window.confirm(`Delete “${title}”?`)) {
-      deleteBlog(id);
+  const handleDelete = async (id, title) => {
+    if (!window.confirm(`Delete “${title}”?`)) return;
+    try {
+      await deleteBlog(id);
       setMessage(`Deleted “${title}”.`);
+    } catch (err) {
+      setMessage(err.message);
     }
   };
 
@@ -50,8 +61,9 @@ export default function AdminPanel() {
       <header className="page-header">
         <h1>Admin panel</h1>
         <p className="lead">
-          Upload admin posts here. Developer blogs live in{' '}
-          <code>src/data/blogs.json</code>.
+          Publish blogs to the API. Seeded posts from{' '}
+          <code>backend/src/main/resources/seed/blogs.json</code> are loaded into
+          Supabase on first backend start.
         </p>
       </header>
 
@@ -113,17 +125,17 @@ export default function AdminPanel() {
                 placeholder="Write your post. Use blank lines between paragraphs."
               />
             </label>
-            <button type="submit" className="btn btn-primary">
-              Publish blog
+            <button type="submit" className="btn btn-primary" disabled={submitting}>
+              {submitting ? 'Publishing…' : 'Publish blog'}
             </button>
           </form>
         </section>
 
         <section className="admin-list-section">
-          <h2>Admin posts ({adminBlogs.length})</h2>
+          <h2>Your posts ({adminBlogs.length})</h2>
           <p className="admin-json-note">
-            JSON blogs ({blogs.length - adminBlogs.length}) are edited in{' '}
-            <code>src/data/blogs.json</code> and cannot be deleted here.
+            Seeded blogs ({blogs.length - adminBlogs.length}) come from the database seed
+            and cannot be deleted here.
           </p>
           {adminBlogs.length === 0 ? (
             <p className="empty-state">No admin posts yet.</p>

@@ -1,14 +1,34 @@
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { articles } from '../data/articles';
+import { fetchArticle } from '../api/articles';
 
 export default function ArticleDetail() {
   const { id } = useParams();
-  const article = articles.find((a) => a.id === id);
+  const [article, setArticle] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!article) {
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    fetchArticle(id)
+      .then(setArticle)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) {
     return (
       <div className="page">
-        <p className="empty-state">Article not found.</p>
+        <p className="empty-state">Loading article…</p>
+      </div>
+    );
+  }
+
+  if (error || !article) {
+    return (
+      <div className="page">
+        <p className="empty-state">{error || 'Article not found.'}</p>
         <Link to="/articles">← Back to articles</Link>
       </div>
     );

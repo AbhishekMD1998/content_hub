@@ -1,34 +1,78 @@
-import { createContext, useContext, useMemo, useState } from 'react';
-
-const STORAGE_KEY = 'content-hub-admin-session';
-
-const ADMIN_EMAIL = 'admin@contenthub.com';
-const ADMIN_PASSWORD = 'admin123';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { fetchMe, login as apiLogin, signup as apiSignup } from '../api/auth';
+import { setToken, getToken } from '../api/client';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [isAdmin, setIsAdmin] = useState(() => {
-    return localStorage.getItem(STORAGE_KEY) === 'true';
-  });
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const login = (email, password) => {
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      localStorage.setItem(STORAGE_KEY, 'true');
-      setIsAdmin(true);
-      return { ok: true };
+  const loadUser = useCallback(async () => {
+    if (!getToken()) {
+      setUser(null);
+      setLoading(false);
+      return;
     }
-    return { ok: false, error: 'Invalid email or password.' };
+    try {
+      const me = await fetchMe();
+      setUser(me);
+    } catch {
+      setToken(null);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadUser();
+  }, [loadUser]);
+
+  const applyAuthResponse = (response) => {
+    setToken(response.token);
+    setUser(response.user);
+    return { ok: true };
+  };
+
+  const login = async (email, password) => {
+    try {
+      const response = await apiLogin({ email, password });
+      return applyAuthResponse(response);
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  };
+
+  const signup = async (email, password, displayName) => {
+    try {
+      const response = await apiSignup({ email, password, displayName });
+      return applyAuthResponse(response);
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    setIsAdmin(false);
+    setToken(null);
+    setUser(null);
   };
 
+  const isAdmin = user?.role === 'ADMIN';
+  const isAuthenticated = Boolean(user);
+
   const value = useMemo(
-    () => ({ isAdmin, login, logout }),
-    [isAdmin],
+    () => ({
+      user,
+      loading,
+      isAdmin,
+      isAuthenticated,
+      login,
+      signup,
+      logout,
+      refreshUser: loadUser,
+    }),
+    [user, loading, isAdmin, isAuthenticated, loadUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

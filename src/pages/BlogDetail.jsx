@@ -1,38 +1,49 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { fetchBlog } from '../api/blogs';
 import BlogArticle from '../components/BlogArticle';
-import { useContent } from '../context/ContentContext';
 
 export default function BlogDetail() {
   const { id } = useParams();
-  const { getBlog } = useContent();
-  const blog = getBlog(id);
+  const [blog, setBlog] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const bar = document.getElementById('blog-progress-bar');
-    if (!bar) return undefined;
-
     const onScroll = () => {
+      if (!bar) return;
       const doc = document.documentElement;
       const scrollTop = doc.scrollTop || document.body.scrollTop;
       const height = doc.scrollHeight - doc.clientHeight;
-      const progress = height > 0 ? (scrollTop / height) * 100 : 0;
-      bar.style.width = `${progress}%`;
+      bar.style.width = `${height > 0 ? (scrollTop / height) * 100 : 0}%`;
     };
-
-    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, [id]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    setLoading(true);
+    setError(null);
+    fetchBlog(id)
+      .then(setBlog)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
   }, [id]);
 
-  if (!blog) {
+  if (loading) {
     return (
       <div className="page">
-        <p className="empty-state">Blog not found.</p>
+        <p className="empty-state">Loading blog…</p>
+      </div>
+    );
+  }
+
+  if (error || !blog) {
+    return (
+      <div className="page">
+        <p className="empty-state">{error || 'Blog not found.'}</p>
         <Link to="/blogs">← Back to blogs</Link>
       </div>
     );

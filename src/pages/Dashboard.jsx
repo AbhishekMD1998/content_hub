@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
-import { articles } from '../data/articles';
+import { useArticles } from '../context/ArticlesContext';
 import { useContent } from '../context/ContentContext';
 import PostCard from '../components/PostCard';
 
 export default function Dashboard() {
   const { blogs } = useContent();
+  const { articles } = useArticles();
   const recentBlogs = [...blogs]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 3);
