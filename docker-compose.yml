@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: content-hub-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: contenthub
+      POSTGRES_PASSWORD: contenthub
+      POSTGRES_DB: content_hub
+    ports:
+      - "5433:5432"
+    volumes:
+      - content_hub_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U contenthub -d content_hub"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  content_hub_pg_data:
