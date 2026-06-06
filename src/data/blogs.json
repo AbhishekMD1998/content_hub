@@ -4,6 +4,7 @@
     {
       "id": "procrastination-why-it-happens",
       "source": "json",
+      "language": "en",
       "title": "Procrastination: Why It Happens and How to Break It",
       "excerpt": "Procrastination is not laziness—it is a habit of putting off important tasks to dodge stress, fear, or mental strain. Learn why it happens and practical ways to start sooner.",
       "author": "Content Hub Editorial",
@@ -221,6 +222,7 @@
     {
       "id": "design-systems-that-scale",
       "source": "json",
+      "language": "en",
       "title": "Design Systems That Scale: A Roadmap from Foundation to Maturity",
       "excerpt": "Scaling a design system is not about adding more components—it is about building living architecture with tokens, modularity, governance, and documentation your whole organization can use.",
       "author": "Content Hub Editorial",
@@ -405,6 +407,7 @@
     {
       "id": "kn-subaha-dinavannu-uttama-maaduvadu-hege",
       "source": "json",
+      "language": "kn",
       "title": "ಬೆಳಿಗ್ಗೆಯನ್ನು ಉತ್ತಮವಾಗಿ ಪ್ರಾರಂಭಿಸುವುದು ಹೇಗೆ",
       "excerpt": "ಒಳ್ಳೆಯ ಬೆಳಿಗ್ಗೆ ನಿಮ್ಮ ಇಡೀ ದಿನವನ್ನು ಬದಲಾಯಿಸಬಲ್ಲದು. ದಿನಚರಿ, ನಿದ್ದೆ, ಮತ್ತು ಮೊದಲ ಒಂದು ಗಂಟೆಯಲ್ಲಿ ಏನು ಮಾಡಬೇಕು ಎಂಬುದನ್ನು ಈ ಲೇಖನದಲ್ಲಿ ತಿಳಿಯಿರಿ.",
       "author": "ಕಂಟೆಂಟ್ ಹಬ್ ಸಂಪಾದಕೀಯ",
@@ -499,6 +502,7 @@
     {
       "id": "kn-hanam-ulisuvudu-hege-yuva",
       "source": "json",
+      "language": "kn",
       "title": "ಯುವಜನರಿಗೆ ಹಣ ಉಳಿಸುವ ಸರಳ ಮಾರ್ಗಗಳು",
       "excerpt": "ಸಂಬಳ ಬಂದ ತಕ್ಷಣ ಖರ್ಚಾಗಿ ಬಿಡುತ್ತದೆಯೇ? ಉಳಿತಾಯ ಕಷ್ಟ ಎನಿಸುತ್ತದೆಯೇ? ಈ ಲೇಖನದಲ್ಲಿ ಕಡಿಮೆ ಆದಾಯದಲ್ಲೂ ಹಣ ಉಳಿಸುವ ಪ್ರಾಯೋಗಿಕ ವಿಧಾನಗಳನ್ನು ತಿಳಿಯಿರಿ.",
       "author": "ಕಂಟೆಂಟ್ ಹಬ್ ಸಂಪಾದಕೀಯ",
@@ -582,6 +586,7 @@
     {
       "id": "kn-manassu-shantha-maaduvudu-hege",
       "source": "json",
+      "language": "kn",
       "title": "ಒತ್ತಡ ಕಡಿಮೆ ಮಾಡಿಕೊಳ್ಳುವ ಸರಳ ಉಪಾಯಗಳು",
       "excerpt": "ಕೆಲಸದ ಒತ್ತಡ, ಕುಟುಂಬದ ಜವಾಬ್ದಾರಿ, ಮತ್ತು ದಿನನಿತ್ಯದ ಆತಂಕ — ಇವನ್ನು ಹೇಗೆ ನಿಭಾಯಿಸುವುದು? ವೈಜ್ಞಾನಿಕವಾಗಿ ಸಾಬೀತಾದ ಸರಳ ವಿಧಾನಗಳನ್ನು ಇಲ್ಲಿ ತಿಳಿಯಿರಿ.",
       "author": "ಕಂಟೆಂಟ್ ಹಬ್ ಸಂಪಾದಕೀಯ",
@@ -667,6 +672,7 @@
     {
       "id": "kn-kannada-techno-jeevan",
       "source": "json",
+      "language": "kn",
       "title": "ತಂತ್ರಜ್ಞಾನ ಮತ್ತು ಕನ್ನಡ — ಡಿಜಿಟಲ್ ಯುಗದಲ್ಲಿ ನಮ್ಮ ಭಾಷೆ",
       "excerpt": "ಕನ್ನಡದಲ್ಲಿ ಇಂಟರ್ನೆಟ್ ಬಳಸುವುದು ಈಗ ಸುಲಭ. ಗೂಗಲ್, ಯೂಟ್ಯೂಬ್, ವಾಟ್ಸ್‌ಆ್ಯಪ್ — ಈ ಎಲ್ಲ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್‌ಗಳನ್ನು ಕನ್ನಡದಲ್ಲಿ ಹೇಗೆ ಉಪಯೋಗಿಸಬೇಕು ಎಂದು ತಿಳಿಯಿರಿ.",
       "author": "ಕಂಟೆಂಟ್ ಹಬ್ ಸಂಪಾದಕೀಯ",
@@ -744,6 +750,7 @@
     {
       "id": "kn-godige-tumba-karuvari-iduvudu",
       "source": "json",
+      "language": "kn",
       "title": "ಕ್ಯಾರಿಯರ್ ಆರಂಭದಲ್ಲಿ ಮಾಡಬೇಕಾದ ೫ ಮುಖ್ಯ ಕೆಲಸಗಳು",
       "excerpt": "ಕೆಲಸಕ್ಕೆ ಸೇರಿದ ಮೊದಲ ಒಂದೆರಡು ವರ್ಷ ನಿಮ್ಮ ಭವಿಷ್ಯವನ್ನು ನಿರ್ಧರಿಸಬಲ್ಲದು. ಆ ಅವಧಿಯಲ್ಲಿ ಏನು ಕಲಿಯಬೇಕು, ಯಾರ ಜೊತೆ ಇರಬೇಕು, ಮತ್ತು ಯಾವ ತಪ್ಪುಗಳು ಮಾಡಬಾರದು ಎಂದು ತಿಳಿಯಿರಿ.",
       "author": "ಕಂಟೆಂಟ್ ಹಬ್ ಸಂಪಾದಕೀಯ",
