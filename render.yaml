@@ -8,11 +8,11 @@ services:
     plan: free
     healthCheckPath: /api/articles
     envVars:
-      # Render is IPv4-only — use Supavisor session pooler (not direct db.*.supabase.co)
+      # Render is IPv4-only — copy exact pooler host from Supabase → Connect → Session pooler
       - key: SUPABASE_PROJECT_REF
         value: ddppgnmbiwibscgfxaxv
-      - key: SUPABASE_POOLER_REGION
-        value: ap-south-1
+      - key: SUPABASE_POOLER_HOST
+        sync: false
       - key: DATABASE_PASSWORD
         sync: false
       - key: JWT_SECRET

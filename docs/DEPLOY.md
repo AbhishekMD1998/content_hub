@@ -19,11 +19,10 @@ Vercel **cannot** run the Spring Boot API — only the React app.
 
 | Variable | Example |
 |----------|---------|
-| `SUPABASE_PROJECT_REF` | `ddppgnmbiwibscgfxaxv` (in `render.yaml`) |
-| `SUPABASE_POOLER_REGION` | `ap-south-1` (from Supabase **Connect → Session pooler**) |
+| `SUPABASE_POOLER_HOST` | Exact host from Supabase **Connect → Session pooler** (e.g. `aws-1-ap-south-1.pooler.supabase.com`) |
 | `DATABASE_PASSWORD` | your Supabase password |
 
-> Do **not** use direct `db.xxx.supabase.co` on Render — IPv6-only; use the session pooler.
+> Do **not** guess the pooler host or use direct `db.xxx.supabase.co` on Render.
 | `JWT_SECRET` | long random string |
 | `FRONTEND_URL` | `https://your-app.vercel.app` (set after Vercel deploy) |
 | `CORS_ALLOWED_ORIGINS` | `https://your-app.vercel.app` |

@@ -1,49 +1,72 @@
 # Render environment variables
 
-## IPv6 / "Network unreachable"
+## "tenant/user postgres.xxx not found"
 
-Supabase **direct** connections (`db.xxx.supabase.co`) use **IPv6**. **Render only supports IPv4**, so you get:
+The pooler **hostname** is wrong. Supabase assigns hosts like `aws-1-ap-south-1.pooler.supabase.com` — **do not guess** `aws-0-ap-south-1`.
 
-```
-java.net.SocketException: Network unreachable
-```
-
-**Fix:** use the Supabase **Session pooler** (IPv4). This repo sets that automatically via `SUPABASE_PROJECT_REF` + `SUPABASE_POOLER_REGION` in `render.yaml`.
-
-### Find your pooler region
-
-Supabase Dashboard → **Connect** → **Session pooler** → host looks like:
-
-```
-aws-0-ap-south-1.pooler.supabase.com
-```
-
-Use the region part (`ap-south-1`) as `SUPABASE_POOLER_REGION` in Render if the default is wrong.
+Copy the **exact** host from your project dashboard.
 
 ---
 
-## Required in Render
+## Setup (5 minutes)
+
+### 1. Get pooler host from Supabase
+
+1. [Supabase Dashboard](https://supabase.com/dashboard) → your project
+2. Click **Connect** (top bar)
+3. Open **Session pooler** (port **5432**)
+4. Copy the **host** only, e.g. `aws-1-ap-south-1.pooler.supabase.com`
+
+### 2. Set Render environment variables
+
+Render → **content-hub-api** → **Environment**:
 
 | Key | Value |
 |-----|--------|
-| `SUPABASE_PROJECT_REF` | `ddppgnmbiwibscgfxaxv` (auto from `render.yaml`) |
-| `SUPABASE_POOLER_REGION` | e.g. `ap-south-1` (from Connect → Session pooler) |
+| `SUPABASE_POOLER_HOST` | Host from step 1 (exact, no `https://`) |
 | `DATABASE_PASSWORD` | Supabase database password |
 | `JWT_SECRET` | Long random string |
 | `FRONTEND_URL` | Vercel URL or `http://localhost:5173` |
 | `CORS_ALLOWED_ORIGINS` | Same as `FRONTEND_URL` |
 
-You can **remove** old `DATABASE_URL` / `DATABASE_USERNAME` from Render — the Docker entrypoint builds them from the pooler settings.
+`SUPABASE_PROJECT_REF` is set in `render.yaml` (`ddppgnmbiwibscgfxaxv`).
+
+**Remove** old vars if present: `DATABASE_URL`, `DATABASE_USERNAME`, `SUPABASE_POOLER_REGION`.
+
+### 3. Redeploy
+
+**Manual Deploy** → **Clear build cache & deploy**
+
+---
+
+## Alternative: paste full JDBC URL
+
+Instead of `SUPABASE_POOLER_HOST`, set:
+
+| Key | Value |
+|-----|--------|
+| `DATABASE_URL` | `jdbc:postgresql://YOUR-POOLER-HOST:5432/postgres?sslmode=require` |
+| `DATABASE_USERNAME` | `postgres.ddppgnmbiwibscgfxaxv` |
+| `DATABASE_PASSWORD` | Supabase password |
 
 ---
 
 ## Verify
 
-After deploy is **Live**, logs should show:
+Logs should show:
 
 ```
-Using Supabase session pooler (IPv4): aws-0-ap-south-1.pooler.supabase.com
-Starting API (database host: aws-0-ap-south-1.pooler.supabase.com)
+Using Supabase session pooler: aws-1-ap-south-1.pooler.supabase.com (user postgres.ddppgnmbiwibscgfxaxv)
 ```
 
 Test: `https://YOUR-SERVICE.onrender.com/api/articles`
+
+---
+
+## Error reference
+
+| Error | Cause | Fix |
+|-------|--------|-----|
+| `Network unreachable` | Direct `db.*.supabase.co` (IPv6) | Use session pooler host |
+| `tenant/user ... not found` | Wrong pooler host | Copy host from **Connect → Session pooler** |
+| `password authentication failed` | Wrong password | Reset in Supabase → Database settings |
