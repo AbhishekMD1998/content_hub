@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { useContent } from '../context/ContentContext';
 
 const emptyForm = {
@@ -11,7 +12,9 @@ const emptyForm = {
 };
 
 export default function AdminPanel() {
+  const { user } = useAuth();
   const { blogs, addBlog, deleteBlog, isJsonBlog } = useContent();
+  const displayName = user?.displayName || user?.email?.split('@')[0] || 'Writer';
   const adminBlogs = blogs.filter((b) => !isJsonBlog(b));
   const [form, setForm] = useState(emptyForm);
   const [message, setMessage] = useState('');
@@ -59,11 +62,10 @@ export default function AdminPanel() {
   return (
     <div className="page admin-page">
       <header className="page-header">
-        <h1>Admin panel</h1>
+        <h1>{displayName}</h1>
         <p className="lead">
-          Publish blogs to the API. Seeded posts from{' '}
-          <code>backend/src/main/resources/seed/blogs.json</code> are loaded into
-          Supabase on first backend start.
+          Your corner of the hub — draft stories, hit publish, and watch them go live
+          for readers everywhere.
         </p>
       </header>
 
