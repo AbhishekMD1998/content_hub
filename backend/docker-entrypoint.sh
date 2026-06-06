@@ -49,5 +49,8 @@ if [ -n "$GOOGLE_CLIENT_ID" ]; then
   echo "Google OAuth enabled (profile: oauth)"
 fi
 
+# Faster JVM warmup on Render free tier (shorter cold starts)
+export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:--XX:+TieredCompilation -XX:TieredStopAtLevel=1}"
+
 echo "Starting API (database host: $(echo "$DATABASE_URL" | sed -E 's|jdbc:postgresql://([^:/]+).*|\1|'), user: $DATABASE_USERNAME)"
 exec java -jar app.jar
