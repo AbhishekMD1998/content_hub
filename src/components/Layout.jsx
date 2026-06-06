@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import Footer from './Footer';
 
 export default function Layout() {
-  const { isAuthenticated, logout, user } = useAuth();
+  const { isAuthenticated, isAdmin, logout, user } = useAuth();
 
   return (
     <div className="app-shell">
@@ -26,6 +26,7 @@ export default function Layout() {
             <NavLink to="/blogs">Blogs</NavLink>
             <NavLink to="/articles">Articles</NavLink>
             {isAuthenticated && <NavLink to="/admin">Admin</NavLink>}
+            {isAdmin && <NavLink to="/admin/docs">Docs</NavLink>}
           </nav>
 
           <div className="header-actions">

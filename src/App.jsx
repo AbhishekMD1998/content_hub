@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ArticlesProvider } from './context/ArticlesContext';
 import { ContentProvider } from './context/ContentContext';
 import Layout from './components/Layout';
+import AdminRoute from './components/AdminRoute';
 import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
 import Blogs from './pages/Blogs';
@@ -10,6 +11,7 @@ import BlogDetail from './pages/BlogDetail';
 import Articles from './pages/Articles';
 import ArticleDetail from './pages/ArticleDetail';
 import AdminLogin from './pages/AdminLogin';
+import AdminDocs from './pages/AdminDocs';
 import AdminPanel from './pages/AdminPanel';
 import AuthCallback from './pages/AuthCallback';
 
@@ -34,6 +36,14 @@ export default function App() {
                     <ProtectedRoute>
                       <AdminPanel />
                     </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="admin/docs"
+                  element={
+                    <AdminRoute>
+                      <AdminDocs />
+                    </AdminRoute>
                   }
                 />
               </Route>

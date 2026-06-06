@@ -119,11 +119,7 @@ export default function AdminLogin() {
           </button>
         </form>
 
-        {mode === 'login' && (
-          <p className="auth-hint">
-            Default admin: <code>admin@contenthub.com</code> / <code>admin123</code>
-          </p>
-        )}
+       
 
         <p className="auth-hint">
           <Link to="/">← Back to dashboard</Link>

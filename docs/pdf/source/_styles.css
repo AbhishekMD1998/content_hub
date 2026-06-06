@@ -1,0 +1,97 @@
+@page { size: A4; margin: 18mm 16mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 11pt;
+  line-height: 1.55;
+  color: #1a1a1a;
+  max-width: 210mm;
+  margin: 0 auto;
+  padding: 0 8px 24px;
+}
+.cover {
+  text-align: center;
+  padding: 48px 0 32px;
+  border-bottom: 3px solid #2d5a3d;
+  margin-bottom: 32px;
+}
+.cover h1 {
+  font-size: 28pt;
+  color: #2d5a3d;
+  margin: 0 0 8px;
+  font-weight: 700;
+}
+.cover .subtitle { font-size: 14pt; color: #555; margin: 0 0 24px; }
+.cover .meta { font-size: 10pt; color: #777; }
+h2 {
+  font-size: 16pt;
+  color: #2d5a3d;
+  border-bottom: 1px solid #c8dcc8;
+  padding-bottom: 6px;
+  margin-top: 28px;
+  page-break-after: avoid;
+}
+h3 { font-size: 12pt; color: #333; margin-top: 20px; page-break-after: avoid; }
+h4 { font-size: 11pt; color: #444; margin-top: 14px; }
+p { margin: 8px 0; }
+ul, ol { margin: 8px 0; padding-left: 22px; }
+li { margin: 4px 0; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 9.5pt;
+  page-break-inside: avoid;
+}
+th, td {
+  border: 1px solid #ccc;
+  padding: 6px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: #eef5ee; color: #2d5a3d; font-weight: 600; }
+code {
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 9pt;
+  background: #f4f4f4;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+pre {
+  background: #f6f8f6;
+  border: 1px solid #dde8dd;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 8.5pt;
+  overflow-x: auto;
+  page-break-inside: avoid;
+}
+.diagram {
+  margin: 16px 0;
+  padding: 12px;
+  background: #fafcfa;
+  border: 1px solid #e0ebe0;
+  border-radius: 8px;
+  page-break-inside: avoid;
+  text-align: center;
+}
+.diagram .mermaid { display: inline-block; }
+.toc { background: #f8faf8; padding: 16px 20px; border-radius: 8px; margin: 20px 0; }
+.toc ol { margin: 0; }
+.toc a { color: #2d5a3d; text-decoration: none; }
+.note {
+  background: #fff8e6;
+  border-left: 4px solid #e6b800;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 10pt;
+}
+.page-break { page-break-before: always; }
+.footer-note {
+  margin-top: 40px;
+  padding-top: 12px;
+  border-top: 1px solid #ddd;
+  font-size: 9pt;
+  color: #888;
+  text-align: center;
+}

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Content Hub — Architecture & Design</title>
+  <link rel="stylesheet" href="_styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });</script>
+</head>
+<body>
+
+<div class="cover">
+  <h1>Content Hub</h1>
+  <p class="subtitle">Architecture &amp; Design Document</p>
+  <p class="meta">Version 1.0 · June 2026 · System Design Reference</p>
+</div>
+
+<div class="toc">
+  <strong>Contents</strong>
+  <ol>
+    <li>Executive Summary</li>
+    <li>System Context (C4 Level 1)</li>
+    <li>Container Architecture (C4 Level 2)</li>
+    <li>Deployment Architecture</li>
+    <li>Data Model</li>
+    <li>Security Architecture</li>
+    <li>Authentication Design</li>
+    <li>Content &amp; Blog Design</li>
+    <li>API Design Principles</li>
+    <li>Non-Functional Requirements</li>
+    <li>Design Decisions</li>
+  </ol>
+</div>
+
+<h2>1. Executive Summary</h2>
+<p>Content Hub is a three-tier web application delivering a public content portal (blogs and articles) with an authenticated admin publishing workflow. The architecture separates static UI delivery (Vercel CDN), stateful API logic (Render containers), and managed persistence (Supabase PostgreSQL).</p>
+
+<table>
+  <tr><th>Goal</th><th>Approach</th></tr>
+  <tr><td>Fast global UI</td><td>Static React SPA on Vercel edge CDN</td></tr>
+  <tr><td>JVM backend without PaaS Java support</td><td>Docker on Render</td></tr>
+  <tr><td>Managed PostgreSQL</td><td>Supabase with Flyway migrations</td></tr>
+  <tr><td>Flexible auth</td><td>JWT + optional Google OAuth2</td></tr>
+  <tr><td>Cost-effective MVP</td><td>Free tiers: Vercel, Render, Supabase</td></tr>
+</table>
+
+<h2>2. System Context (C4 Level 1)</h2>
+<div class="diagram">
+  <pre class="mermaid">
+C4Context
+  title System Context — Content Hub
+
+  Person(reader, "Reader", "Browses blogs and articles")
+  Person(author, "Author/Admin", "Publishes and manages blogs")
+
+  System(hub, "Content Hub", "Blogs & articles platform")
+
+  System_Ext(google, "Google OAuth", "Identity provider")
+  System_Ext(adsense, "Google AdSense", "Advertising")
+  System_Ext(email, "Email", "Contact via footer")
+
+  Rel(reader, hub, "Reads content", "HTTPS")
+  Rel(author, hub, "Signs in, publishes", "HTTPS")
+  Rel(hub, google, "OAuth 2.0", "HTTPS")
+  Rel(hub, adsense, "Serves ads", "JS")
+  Rel(reader, email, "Contact", "mailto")
+  </pre>
+</div>
+
+<h2>3. Container Architecture (C4 Level 2)</h2>
+<div class="diagram">
+  <pre class="mermaid">
+flowchart TB
+  subgraph Client["Client Tier"]
+    Browser[Web Browser]
+  end
+
+  subgraph Vercel["Vercel (CDN)"]
+    SPA[React SPA<br/>Vite build]
+    Static[Static assets<br/>favicon, ads.txt]
+  end
+
+  subgraph Render["Render (Docker)"]
+  direction TB
+    API[Spring Boot API<br/>Port 8080/10000]
+    Entry[docker-entrypoint.sh<br/>Pooler URL builder]
+    Entry --> API
+  end
+
+  subgraph Supabase["Supabase Cloud"]
+    Pooler[Session Pooler<br/>IPv4]
+    PG[(PostgreSQL 17)]
+    Pooler --> PG
+  end
+
+  subgraph Google["Google Cloud"]
+    OAuth[OAuth 2.0]
+    Ads[AdSense]
+  end
+
+  Browser --> SPA
+  Browser --> Static
+  SPA -->|REST + JWT| API
+  SPA -->|OAuth redirect| API
+  API --> Pooler
+  API --> OAuth
+  SPA --> Ads
+  </pre>
+</div>
+
+<h3>Component responsibilities</h3>
+<table>
+  <tr><th>Container</th><th>Responsibility</th><th>Technology</th></tr>
+  <tr><td>React SPA</td><td>UI, routing, client state, API calls</td><td>React 19, Vite</td></tr>
+  <tr><td>Spring Boot API</td><td>Auth, validation, business rules, REST</td><td>Java 17, Spring 3.4</td></tr>
+  <tr><td>PostgreSQL</td><td>Users, articles, blogs persistence</td><td>Supabase</td></tr>
+  <tr><td>Docker image</td><td>Reproducible JVM runtime on Render</td><td>Eclipse Temurin 17</td></tr>
+</table>
+
+<h2 class="page-break">4. Deployment Architecture</h2>
+<div class="diagram">
+  <pre class="mermaid">
+flowchart LR
+  subgraph GitHub
+    Repo[content_hub repo<br/>main branch]
+  end
+
+  subgraph CI_CD["Continuous Deployment"]
+    VercelHook[Vercel Git Integration]
+    RenderHook[Render Blueprint<br/>render.yaml]
+  end
+
+  subgraph Production
+    VercelProd[content-hub-pi-bay.vercel.app]
+    RenderProd[content-hub-api-vkkj.onrender.com]
+    SupaDB[(Supabase<br/>ap-northeast-1 pooler)]
+  end
+
+  Repo --> VercelHook --> VercelProd
+  Repo --> RenderHook --> RenderProd
+  RenderProd --> SupaDB
+  VercelProd -->|VITE_API_BASE_URL| RenderProd
+  </pre>
+</div>
+
+<h3>Render Docker pipeline</h3>
+<div class="diagram">
+  <pre class="mermaid">
+flowchart TD
+  A[Git push main] --> B[Render build]
+  B --> C[Maven package JAR]
+  C --> D[Docker image]
+  D --> E[Push registry]
+  E --> F[Deploy container]
+  F --> G[entrypoint.sh]
+  G --> H{Env vars OK?}
+  H -->|No| FAIL[Exit 1 + message]
+  H -->|Yes| I[Build JDBC URL from pooler]
+  I --> J[Enable oauth profile if GOOGLE_CLIENT_ID]
+  J --> K[java -jar app.jar]
+  K --> L[Health check /api/health]
+  L --> M[Live]
+  </pre>
+</div>
+
+<h3>Network &amp; connectivity</h3>
+<table>
+  <tr><th>Path</th><th>Protocol</th><th>Notes</th></tr>
+  <tr><td>Browser → Vercel</td><td>HTTPS</td><td>Static SPA, CDN cached</td></tr>
+  <tr><td>Browser → Render API</td><td>HTTPS</td><td>CORS with credentials</td></tr>
+  <tr><td>Render → Supabase</td><td>PostgreSQL SSL</td><td>Session pooler (IPv4 required)</td></tr>
+  <tr><td>Render → Google</td><td>OAuth 2.0 HTTPS</td><td>Redirect URI on Render host</td></tr>
+</table>
+
+<div class="note">Render free tier is IPv4-only. Supabase direct <code>db.*.supabase.co</code> is IPv6 — use session pooler <code>aws-1-ap-northeast-1.pooler.supabase.com</code>.</div>
+
+<h2>5. Data Model</h2>
+<div class="diagram">
+  <pre class="mermaid">
+erDiagram
+  USERS {
+    uuid id PK
+    varchar email UK
+    varchar password_hash
+    varchar google_id UK
+    varchar display_name
+    text avatar_url
+    varchar role
+    timestamptz created_at
+    timestamptz updated_at
+  }
+
+  ARTICLES {
+    uuid id PK
+    varchar slug UK
+    varchar title
+    text excerpt
+    varchar author
+    varchar category
+    varchar read_time
+    text content
+    timestamptz created_at
+    timestamptz updated_at
+  }
+
+  BLOGS {
+    uuid id PK
+    varchar slug UK
+    varchar title
+    text excerpt
+    varchar author
+    varchar category
+    varchar read_time
+    text cover_image
+    text_array tags
+    jsonb blocks
+    text content
+    varchar source
+    uuid created_by FK
+    timestamptz created_at
+    timestamptz updated_at
+  }
+
+  USERS ||--o{ BLOGS : creates
+  </pre>
+</div>
+
+<h3>Blog source types</h3>
+<table>
+  <tr><th>source</th><th>Origin</th><th>Editable in Admin?</th></tr>
+  <tr><td>json</td><td>seed/blogs.json via DataSeeder</td><td>No (read-only in UI)</td></tr>
+  <tr><td>admin</td><td>AdminPanel form submission</td><td>Yes (delete supported)</td></tr>
+  <tr><td>api</td><td>Default for API-created posts</td><td>Yes</td></tr>
+</table>
+
+<h3>Schema migration strategy</h3>
+<p>Flyway manages schema via <code>V1__init_schema.sql</code>. <code>baseline-on-migrate: true</code> allows coexistence with manually applied Supabase SQL. Hibernate <code>ddl-auto: validate</code> ensures entity/schema alignment at runtime.</p>
+
+<h2 class="page-break">6. Security Architecture</h2>
+<div class="diagram">
+  <pre class="mermaid">
+flowchart TB
+  subgraph Perimeter
+    HTTPS[TLS everywhere]
+    CORS[CORS origin allowlist<br/>*.vercel.app + config]
+  end
+
+  subgraph API_Security["API Security Layer"]
+    CSRF[CSRF disabled<br/>stateless JWT API]
+    JWT[JwtAuthenticationFilter]
+    RBAC[Role-based access<br/>USER / ADMIN]
+    OAUTH[OAuth2 Client optional]
+  end
+
+  subgraph Data_Security
+    BCrypt[BCrypt password hashing]
+    SSL[DB SSL require]
+    Secrets[Env var secrets<br/>not in git]
+  end
+
+  HTTPS --> CORS --> JWT --> RBAC
+  JWT --> OAUTH
+  RBAC --> BCrypt
+  RBAC --> SSL
+  </pre>
+</div>
+
+<h3>Endpoint access matrix</h3>
+<table>
+  <tr><th>Resource</th><th>Anonymous</th><th>Authenticated USER</th><th>ADMIN</th></tr>
+  <tr><td>GET articles/blogs</td><td>✓</td><td>✓</td><td>✓</td></tr>
+  <tr><td>POST /api/blogs</td><td>✗</td><td>✓</td><td>✓</td></tr>
+  <tr><td>DELETE /api/blogs</td><td>✗</td><td>✓</td><td>✓</td></tr>
+  <tr><td>GET /api/auth/me</td><td>✗</td><td>✓</td><td>✓</td></tr>
+</table>
+
+<h2>7. Authentication Design</h2>
+<h3>JWT token structure</h3>
+<table>
+  <tr><th>Claim</th><th>Content</th></tr>
+  <tr><td>sub</td><td>User UUID</td></tr>
+  <tr><td>email</td><td>User email</td></tr>
+  <tr><td>role</td><td>USER or ADMIN</td></tr>
+  <tr><td>exp</td><td>24h default (JWT_EXPIRATION_MS)</td></tr>
+</table>
+
+<div class="diagram">
+  <pre class="mermaid">
+stateDiagram-v2
+  [*] --> Anonymous
+  Anonymous --> Authenticated: login / signup / Google OAuth
+  Authenticated --> Anonymous: logout (clear token)
+  Authenticated --> Authenticated: API calls with Bearer token
+  Anonymous --> Anonymous: browse public content
+  </pre>
+</div>
+
+<h3>Google OAuth redirect flow</h3>
+<div class="diagram">
+  <pre class="mermaid">
+sequenceDiagram
+  autonumber
+  actor User
+  participant FE as Vercel SPA
+  participant API as Render API
+  participant G as Google
+
+  User->>FE: Click Google sign-in
+  FE->>API: Navigate /oauth2/authorization/google
+  API->>G: Authorization request<br/>redirect_uri=.../login/oauth2/code/google
+  G->>User: Consent
+  User->>G: Approve
+  G->>API: Authorization code
+  API->>G: Exchange code for tokens
+  G-->>API: User profile (email, sub, name)
+  API->>API: Issue JWT
+  API->>FE: 302 FRONTEND_URL/auth/callback?token=JWT
+  FE->>FE: Store token, load /admin
+  </pre>
+</div>
+
+<h2>8. Content &amp; Blog Design</h2>
+<div class="diagram">
+  <pre class="mermaid">
+flowchart LR
+  subgraph Public["Public Read Path"]
+    P1[Blogs.jsx] --> API1[GET /api/blogs]
+    P2[BlogDetail.jsx] --> API2[GET /api/blogs/slug]
+    P3[Articles.jsx] --> API3[GET /api/articles]
+    API1 --> DB[(PostgreSQL)]
+    API2 --> DB
+    API3 --> DB
+  end
+
+  subgraph Admin["Admin Write Path"]
+    A1[AdminPanel.jsx] --> API4[POST /api/blogs]
+    A1 --> API5[DELETE /api/blogs/slug]
+    API4 --> DB
+    API5 --> DB
+  end
+  </pre>
+</div>
+
+<h3>Blog rendering</h3>
+<ul>
+  <li><strong>JSON blogs</strong> (seeded): <code>BlogRenderer.jsx</code> renders structured blocks (headings, paragraphs, stickers, TOC)</li>
+  <li><strong>Admin blogs</strong>: plain text content with paragraph breaks</li>
+  <li><strong>Articles</strong>: read-only curated content, seeded on first boot</li>
+</ul>
+
+<h2>9. API Design Principles</h2>
+<ul>
+  <li><strong>RESTful resources</strong> — nouns (<code>/api/blogs</code>), HTTP verbs for actions</li>
+  <li><strong>Slug-based identity</strong> — human-readable URLs for blogs and articles</li>
+  <li><strong>Stateless sessions</strong> — JWT in Authorization header, no server-side session store</li>
+  <li><strong>Consistent errors</strong> — <code>{ "message": "..." }</code> via ApiExceptionHandler</li>
+  <li><strong>Public read, authenticated write</strong> — content discovery without login</li>
+</ul>
+
+<h2 class="page-break">10. Non-Functional Requirements</h2>
+<table>
+  <tr><th>Attribute</th><th>Target</th><th>Current implementation</th></tr>
+  <tr><td>Availability</td><td>Best-effort on free tier</td><td>Render cold starts; health checks</td></tr>
+  <tr><td>Scalability</td><td>Horizontal API scaling</td><td>Stateless API; connection pooler</td></tr>
+  <tr><td>Security</td><td>HTTPS, JWT, OAuth</td><td>Spring Security, BCrypt, CORS</td></tr>
+  <tr><td>Maintainability</td><td>Layered backend, componentized FE</td><td>Controller → Service → Repository</td></tr>
+  <tr><td>Portability</td><td>Cloud-agnostic API</td><td>Docker + env-driven config</td></tr>
+  <tr><td>Observability</td><td>Health endpoint</td><td>GET /api/health, Render logs</td></tr>
+</table>
+
+<h3>UI design system</h3>
+<table>
+  <tr><th>Element</th><th>Choice</th></tr>
+  <tr><td>Typography</td><td>Cormorant Garamond (headings) + DM Sans (body)</td></tr>
+  <tr><td>Palette</td><td>Cream background (#f7f4ee), forest green accents (#2d5a3d)</td></tr>
+  <tr><td>Layout</td><td>People Grove–inspired editorial dashboard</td></tr>
+  <tr><td>Responsive</td><td>Mobile-friendly grid and navigation</td></tr>
+</table>
+
+<h2>11. Design Decisions (ADR Summary)</h2>
+<table>
+  <tr><th>Decision</th><th>Rationale</th><th>Trade-off</th></tr>
+  <tr><td>React SPA on Vercel</td><td>Fast deploys, CDN, free tier</td><td>No SSR; SEO limited</td></tr>
+  <tr><td>Spring Boot on Render Docker</td><td>No native Java on Render</td><td>Slow cold starts on free tier</td></tr>
+  <tr><td>Supabase pooler not direct DB</td><td>Render is IPv4-only</td><td>Extra env config</td></tr>
+  <tr><td>JWT not server sessions</td><td>Stateless, simple SPA auth</td><td>No instant token revoke</td></tr>
+  <tr><td>Flyway migrations</td><td>Versioned schema, reproducible</td><td>Migration discipline required</td></tr>
+  <tr><td>JSON blocks for seed blogs</td><td>Rich layout without CMS</td><td>Two blog render paths</td></tr>
+  <tr><td>Google OAuth optional profile</td><td>Local dev without Google creds</td><td>Profile activation via entrypoint</td></tr>
+</table>
+
+<div class="footer-note">
+  Content Hub Architecture &amp; Design · Generated June 2026 · https://github.com/AbhishekMD1998/content_hub
+</div>
+
+</body>
+</html>

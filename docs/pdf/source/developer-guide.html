@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Content Hub — Developer Guide</title>
+  <link rel="stylesheet" href="_styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });</script>
+</head>
+<body>
+
+<div class="cover">
+  <h1>Content Hub</h1>
+  <p class="subtitle">Developer Guide</p>
+  <p class="meta">Version 1.0 · June 2026 · React + Spring Boot + Supabase</p>
+</div>
+
+<div class="toc">
+  <strong>Contents</strong>
+  <ol>
+    <li>Overview</li>
+    <li>Tech Stack</li>
+    <li>Local Development Setup</li>
+    <li>Project Structure</li>
+    <li>API Reference</li>
+    <li>Authentication Flows</li>
+    <li>Frontend Guide</li>
+    <li>Backend Guide</li>
+    <li>Environment Variables</li>
+    <li>Deployment</li>
+    <li>Troubleshooting</li>
+  </ol>
+</div>
+
+<h2>1. Overview</h2>
+<p>Content Hub is a full-stack blogs and articles platform. The <strong>React</strong> frontend is hosted on <strong>Vercel</strong>; the <strong>Spring Boot</strong> API runs on <strong>Render</strong> (Docker); data lives in <strong>Supabase PostgreSQL</strong>.</p>
+
+<div class="diagram">
+  <pre class="mermaid">
+flowchart LR
+  Dev[Developer] --> FE[Vercel Frontend]
+  Dev --> API[Render API]
+  FE -->|HTTPS REST| API
+  API --> DB[(Supabase PostgreSQL)]
+  Dev -->|OAuth| Google[Google Identity]
+  Google --> API
+  </pre>
+</div>
+
+<h2>2. Tech Stack</h2>
+<table>
+  <tr><th>Layer</th><th>Technology</th><th>Version</th></tr>
+  <tr><td>Frontend</td><td>React, React Router, Vite</td><td>19.x / 7.x / 8.x</td></tr>
+  <tr><td>Backend</td><td>Spring Boot, Java</td><td>3.4.4 / 17</td></tr>
+  <tr><td>Auth</td><td>JWT (jjwt), Google OAuth2 Client</td><td>0.12.6</td></tr>
+  <tr><td>Database</td><td>PostgreSQL via JPA + Flyway</td><td>17</td></tr>
+  <tr><td>Hosting</td><td>Vercel, Render, Supabase</td><td>—</td></tr>
+</table>
+
+<h2>3. Local Development Setup</h2>
+<h3>Prerequisites</h3>
+<ul>
+  <li>Node.js 20+, Java 17, Docker (optional local Postgres)</li>
+  <li>Supabase project or local <code>docker compose</code> database</li>
+</ul>
+
+<h3>Quick start</h3>
+<pre>git clone https://github.com/AbhishekMD1998/content_hub.git
+cd content-hub
+bash scripts/setup.sh          # installs deps, Maven wrapper
+docker compose up -d           # local Postgres on :5433 (optional)
+bash scripts/configure-supabase.sh   # OR copy backend/.env.example
+bash scripts/start-backend.sh  # API on http://localhost:8080
+npm run dev                    # Frontend on http://localhost:5173</pre>
+
+<div class="diagram">
+  <pre class="mermaid">
+flowchart TD
+  A[Clone repo] --> B[setup.sh]
+  B --> C{Database?}
+  C -->|Local| D[docker compose up]
+  C -->|Cloud| E[configure-supabase.sh]
+  D --> F[start-backend.sh]
+  E --> F
+  F --> G[npm run dev]
+  G --> H[Open localhost:5173]
+  </pre>
+</div>
+
+<div class="note">In dev, <code>VITE_API_BASE_URL</code> is unset — Vite proxies <code>/api</code>, <code>/oauth2</code>, and <code>/login</code> to port 8080.</div>
+
+<h2>4. Project Structure</h2>
+<pre>content-hub/
+├── src/                    # React frontend
+│   ├── api/                # HTTP client, auth, blogs, articles
+│   ├── components/         # Layout, PostCard, BlogRenderer, etc.
+│   ├── context/            # AuthContext, ContentContext
+│   └── pages/              # Dashboard, Blogs, Admin, Login
+├── backend/                # Spring Boot API
+│   └── src/main/java/com/contenthub/
+│       ├── config/         # Security, DataSeeder
+│       ├── domain/         # User, Blog, Article entities
+│       ├── security/       # JWT filter, OAuth handler
+│       ├── service/        # Business logic
+│       └── web/            # REST controllers
+├── scripts/                # Dev & deploy helpers
+├── docs/                   # Markdown documentation
+├── render.yaml             # Render Blueprint
+└── vercel.json             # Vercel SPA config</pre>
+
+<h2>5. API Reference</h2>
+<table>
+  <tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr>
+  <tr><td>GET</td><td>/api/health</td><td>Public</td><td>Health check</td></tr>
+  <tr><td>POST</td><td>/api/auth/signup</td><td>Public</td><td>Register user</td></tr>
+  <tr><td>POST</td><td>/api/auth/login</td><td>Public</td><td>Email/password login</td></tr>
+  <tr><td>GET</td><td>/api/auth/me</td><td>Bearer JWT</td><td>Current user profile</td></tr>
+  <tr><td>GET</td><td>/api/auth/config</td><td>Public</td><td>{ googleEnabled: bool }</td></tr>
+  <tr><td>GET</td><td>/api/articles</td><td>Public</td><td>List articles</td></tr>
+  <tr><td>GET</td><td>/api/articles/{slug}</td><td>Public</td><td>Article detail</td></tr>
+  <tr><td>GET</td><td>/api/blogs</td><td>Public</td><td>List blogs</td></tr>
+  <tr><td>GET</td><td>/api/blogs/{slug}</td><td>Public</td><td>Blog detail</td></tr>
+  <tr><td>POST</td><td>/api/blogs</td><td>JWT</td><td>Create blog</td></tr>
+  <tr><td>DELETE</td><td>/api/blogs/{slug}</td><td>JWT</td><td>Delete blog</td></tr>
+  <tr><td>GET</td><td>/oauth2/authorization/google</td><td>Public</td><td>Start Google OAuth</td></tr>
+</table>
+
+<h3>Example: Signup request</h3>
+<pre>POST /api/auth/signup
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "secret123",
+  "displayName": "Jane Doe"
+}
+
+→ 200 { "token": "eyJ...", "user": { "id", "email", "displayName", "role" } }</pre>
+
+<h2 class="page-break">6. Authentication Flows</h2>
+
+<h3>6.1 Email / Password Login</h3>
+<div class="diagram">
+  <pre class="mermaid">
+sequenceDiagram
+  participant U as User Browser
+  participant FE as React App
+  participant API as Spring Boot API
+  participant DB as PostgreSQL
+
+  U->>FE: Submit login form
+  FE->>API: POST /api/auth/login
+  API->>DB: Find user by email
+  DB-->>API: User + password_hash
+  API->>API: BCrypt verify + JWT sign
+  API-->>FE: { token, user }
+  FE->>FE: localStorage content-hub-token
+  FE-->>U: Redirect to /admin
+  </pre>
+</div>
+
+<h3>6.2 Google OAuth</h3>
+<div class="diagram">
+  <pre class="mermaid">
+sequenceDiagram
+  participant U as User
+  participant FE as Vercel Frontend
+  participant API as Render API
+  participant G as Google
+  participant DB as Supabase
+
+  U->>FE: Click Continue with Google
+  FE->>API: GET /oauth2/authorization/google
+  API->>G: OAuth redirect
+  G-->>U: Consent screen
+  U->>G: Approve
+  G->>API: GET /login/oauth2/code/google
+  API->>DB: findOrCreateGoogleUser
+  API-->>FE: Redirect /auth/callback?token=JWT
+  FE->>API: GET /api/auth/me
+  FE-->>U: Redirect /admin
+  </pre>
+</div>
+
+<h3>6.3 Protected API requests</h3>
+<div class="diagram">
+  <pre class="mermaid">
+flowchart LR
+  REQ[HTTP Request] --> FILTER[JwtAuthenticationFilter]
+  FILTER -->|Bearer valid| CTX[SecurityContext]
+  FILTER -->|No/invalid token| ANON[Anonymous]
+  CTX --> CTRL[Controller]
+  ANON --> PUB{Public endpoint?}
+  PUB -->|Yes| CTRL
+  PUB -->|No| DENY[401 Unauthorized]
+  </pre>
+</div>
+
+<h2>7. Frontend Guide</h2>
+<h3>Key files</h3>
+<table>
+  <tr><th>File</th><th>Role</th></tr>
+  <tr><td>src/api/client.js</td><td>fetch wrapper, JWT header, error handling</td></tr>
+  <tr><td>src/api/config.js</td><td>VITE_API_BASE_URL → apiUrl()</td></tr>
+  <tr><td>src/context/AuthContext.jsx</td><td>login, signup, logout, user state</td></tr>
+  <tr><td>src/context/ContentContext.jsx</td><td>blogs list, addBlog, deleteBlog</td></tr>
+  <tr><td>src/components/ProtectedRoute.jsx</td><td>Guards /admin route</td></tr>
+  <tr><td>src/pages/AdminPanel.jsx</td><td>Create/delete blog posts</td></tr>
+</table>
+
+<h3>Routing (App.jsx)</h3>
+<table>
+  <tr><th>Path</th><th>Page</th><th>Auth</th></tr>
+  <tr><td>/</td><td>Dashboard</td><td>Public</td></tr>
+  <tr><td>/blogs, /blogs/:id</td><td>Blogs list & detail</td><td>Public</td></tr>
+  <tr><td>/articles, /articles/:id</td><td>Articles list & detail</td><td>Public</td></tr>
+  <tr><td>/admin/login</td><td>AdminLogin</td><td>Public</td></tr>
+  <tr><td>/admin</td><td>AdminPanel</td><td>JWT required</td></tr>
+  <tr><td>/auth/callback</td><td>AuthCallback</td><td>OAuth handoff</td></tr>
+</table>
+
+<h2>8. Backend Guide</h2>
+<h3>Layered architecture</h3>
+<div class="diagram">
+  <pre class="mermaid">
+flowchart TB
+  subgraph Web
+    AC[AuthController]
+    BC[BlogController]
+    ARC[ArticleController]
+  end
+  subgraph Service
+    AS[AuthService]
+    US[UserService]
+    CS[ContentService]
+    JS[JwtService]
+  end
+  subgraph Data
+    UR[UserRepository]
+    BR[BlogRepository]
+    AR[ArticleRepository]
+  end
+  AC --> AS --> US --> UR
+  BC --> CS --> BR
+  ARC --> CS --> AR
+  AS --> JS
+  </pre>
+</div>
+
+<h3>Data seeding</h3>
+<p><code>DataSeeder</code> runs on startup: creates admin user (<code>admin@contenthub.com</code> / <code>admin123</code>), sample articles, and blogs from <code>seed/blogs.json</code> if tables are empty.</p>
+
+<h2>9. Environment Variables</h2>
+<h3>Frontend (Vercel)</h3>
+<table>
+  <tr><th>Variable</th><th>Description</th></tr>
+  <tr><td>VITE_API_BASE_URL</td><td>Render API URL, e.g. https://content-hub-api-vkkj.onrender.com</td></tr>
+</table>
+
+<h3>Backend (Render / backend/.env)</h3>
+<table>
+  <tr><th>Variable</th><th>Description</th></tr>
+  <tr><td>DATABASE_URL / pooler vars</td><td>Supabase JDBC connection</td></tr>
+  <tr><td>DATABASE_PASSWORD</td><td>Supabase DB password</td></tr>
+  <tr><td>JWT_SECRET</td><td>JWT signing key (32+ chars)</td></tr>
+  <tr><td>FRONTEND_URL</td><td>Vercel URL for OAuth redirect</td></tr>
+  <tr><td>CORS_ALLOWED_ORIGINS</td><td>Allowed frontend origins</td></tr>
+  <tr><td>GOOGLE_CLIENT_ID / SECRET</td><td>Google OAuth credentials</td></tr>
+  <tr><td>SUPABASE_POOLER_HOST</td><td>Session pooler hostname (IPv4)</td></tr>
+</table>
+
+<h2 class="page-break">10. Deployment</h2>
+<pre># Frontend
+npx vercel --prod
+
+# Backend — auto-deploys from main via Render Blueprint (render.yaml)
+# Set env vars in Render Dashboard → Environment</pre>
+
+<p>Production URLs:</p>
+<ul>
+  <li>Frontend: https://content-hub-pi-bay.vercel.app</li>
+  <li>API: https://content-hub-api-vkkj.onrender.com</li>
+</ul>
+
+<h2>11. Troubleshooting</h2>
+<table>
+  <tr><th>Issue</th><th>Fix</th></tr>
+  <tr><td>Cannot reach API from Vercel</td><td>Set VITE_API_BASE_URL on Vercel</td></tr>
+  <tr><td>Google redirect_uri_mismatch</td><td>Add exact Render callback URL in Google Console</td></tr>
+  <tr><td>Render Network unreachable</td><td>Use Supabase session pooler, not direct db.* host</td></tr>
+  <tr><td>API slow first request</td><td>Render free tier cold start (~60–120s)</td></tr>
+  <tr><td>CORS errors</td><td>Match FRONTEND_URL in Render CORS_ALLOWED_ORIGINS</td></tr>
+</table>
+
+<div class="footer-note">
+  Content Hub Developer Guide · Generated June 2026 · https://github.com/AbhishekMD1998/content_hub
+</div>
+
+</body>
+</html>

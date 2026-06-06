@@ -12,7 +12,7 @@ const emptyForm = {
 };
 
 export default function AdminPanel() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { blogs, addBlog, deleteBlog, isJsonBlog } = useContent();
   const displayName = user?.displayName || user?.email?.split('@')[0] || 'Writer';
   const adminBlogs = blogs.filter((b) => !isJsonBlog(b));
@@ -66,6 +66,12 @@ export default function AdminPanel() {
         <p className="lead">
           Your corner of the hub — draft stories, hit publish, and watch them go live
           for readers everywhere.
+          {isAdmin && (
+            <>
+              {' '}
+              <Link to="/admin/docs">View technical documentation</Link>.
+            </>
+          )}
         </p>
       </header>
 
