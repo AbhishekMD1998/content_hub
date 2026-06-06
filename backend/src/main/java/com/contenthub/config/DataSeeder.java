@@ -159,6 +159,7 @@ public class DataSeeder implements CommandLineRunner {
                 blog.setReadTime(node.path("readTime").asText(null));
                 blog.setCoverImage(node.path("coverImage").asText(null));
                 blog.setSource("json");
+                blog.setSponsored(node.path("sponsored").asBoolean(false));
 
                 if (node.hasNonNull("tags") && node.get("tags").isArray()) {
                     String[] tags = new String[node.get("tags").size()];

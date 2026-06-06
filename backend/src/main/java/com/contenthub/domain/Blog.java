@@ -46,6 +46,15 @@ public class Blog {
     @Column(nullable = false)
     private String source = "api";
 
+    @Column(nullable = false)
+    private boolean sponsored = false;
+
+    @Column(name = "affiliate_label")
+    private String affiliateLabel;
+
+    @Column(name = "affiliate_url")
+    private String affiliateUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     private User createdBy;
@@ -151,6 +160,30 @@ public class Blog {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public boolean isSponsored() {
+        return sponsored;
+    }
+
+    public void setSponsored(boolean sponsored) {
+        this.sponsored = sponsored;
+    }
+
+    public String getAffiliateLabel() {
+        return affiliateLabel;
+    }
+
+    public void setAffiliateLabel(String affiliateLabel) {
+        this.affiliateLabel = affiliateLabel;
+    }
+
+    public String getAffiliateUrl() {
+        return affiliateUrl;
+    }
+
+    public void setAffiliateUrl(String affiliateUrl) {
+        this.affiliateUrl = affiliateUrl;
     }
 
     public User getCreatedBy() {

@@ -69,6 +69,15 @@ public class ContentService {
                 : "General");
         blog.setContent(request.content().trim());
         blog.setSource("admin");
+        blog.setSponsored(Boolean.TRUE.equals(request.sponsored()));
+        if (blog.isSponsored() && request.affiliateUrl() != null && !request.affiliateUrl().isBlank()) {
+            blog.setAffiliateUrl(request.affiliateUrl().trim());
+            blog.setAffiliateLabel(
+                    request.affiliateLabel() != null && !request.affiliateLabel().isBlank()
+                            ? request.affiliateLabel().trim()
+                            : "View offer"
+            );
+        }
         blog.setCreatedBy(author);
         return BlogDto.from(blogRepository.save(blog));
     }

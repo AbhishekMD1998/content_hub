@@ -26,6 +26,7 @@
         "coverImage": { "type": "string" },
         "tags": { "type": "array", "items": { "type": "string" } },
         "content": { "type": "string", "description": "Legacy plain text (optional if blocks provided)" },
+        "sponsored": { "type": "boolean", "description": "Marks post as paid/sponsored content" },
         "blocks": {
           "type": "array",
           "items": { "$ref": "#/$defs/block" }
@@ -41,7 +42,8 @@
         { "$ref": "#/$defs/list" },
         { "$ref": "#/$defs/callout" },
         { "$ref": "#/$defs/sticker" },
-        { "$ref": "#/$defs/divider" }
+        { "$ref": "#/$defs/divider" },
+        { "$ref": "#/$defs/affiliate" }
       ]
     },
     "intro": {
@@ -114,6 +116,16 @@
       "required": ["type"],
       "properties": {
         "type": { "const": "divider" }
+      }
+    },
+    "affiliate": {
+      "type": "object",
+      "required": ["type", "url", "label"],
+      "properties": {
+        "type": { "const": "affiliate" },
+        "label": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "disclosure": { "type": "string" }
       }
     }
   }

@@ -18,6 +18,9 @@ public record BlogDto(
         List<Object> blocks,
         String content,
         String source,
+        boolean sponsored,
+        String affiliateLabel,
+        String affiliateUrl,
         Instant createdAt
 ) {
     public static BlogDto from(Blog blog) {
@@ -34,6 +37,9 @@ public record BlogDto(
                 blog.getBlocks(),
                 blog.getContent(),
                 blog.getSource(),
+                blog.isSponsored(),
+                blog.getAffiliateLabel(),
+                blog.getAffiliateUrl(),
                 blog.getCreatedAt()
         );
     }

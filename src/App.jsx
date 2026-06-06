@@ -13,8 +13,10 @@ import Articles from './pages/Articles';
 import ArticleDetail from './pages/ArticleDetail';
 import AdminLogin from './pages/AdminLogin';
 import AdminDocs from './pages/AdminDocs';
+import About from './pages/About';
 import AdminPanel from './pages/AdminPanel';
 import AuthCallback from './pages/AuthCallback';
+import Privacy from './pages/Privacy';
 
 export default function App() {
   return (
@@ -31,6 +33,8 @@ export default function App() {
                 <Route path="blogs/:id" element={<BlogDetail />} />
                 <Route path="articles" element={<Articles />} />
                 <Route path="articles/:id" element={<ArticleDetail />} />
+                <Route path="about" element={<About />} />
+                <Route path="privacy" element={<Privacy />} />
                 <Route path="admin/login" element={<AdminLogin />} />
                 <Route
                   path="admin"

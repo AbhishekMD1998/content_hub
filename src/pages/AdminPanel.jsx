@@ -9,6 +9,9 @@ const emptyForm = {
   author: 'Admin',
   category: 'General',
   content: '',
+  sponsored: false,
+  affiliateLabel: '',
+  affiliateUrl: '',
 };
 
 export default function AdminPanel() {
@@ -21,8 +24,11 @@ export default function AdminPanel() {
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -39,6 +45,9 @@ export default function AdminPanel() {
         author: form.author.trim() || 'Admin',
         category: form.category.trim() || 'General',
         content: form.content.trim(),
+        sponsored: form.sponsored,
+        affiliateLabel: form.affiliateLabel.trim(),
+        affiliateUrl: form.affiliateUrl.trim(),
       });
       setForm(emptyForm);
       setMessage(`Published “${blog.title}”.`);
@@ -133,6 +142,38 @@ export default function AdminPanel() {
                 placeholder="Write your post. Use blank lines between paragraphs."
               />
             </label>
+            <label className="admin-checkbox">
+              <input
+                type="checkbox"
+                name="sponsored"
+                checked={form.sponsored}
+                onChange={handleChange}
+              />
+              Mark as sponsored (shows disclosure and optional affiliate link)
+            </label>
+            {form.sponsored && (
+              <div className="form-row">
+                <label>
+                  Affiliate button label
+                  <input
+                    name="affiliateLabel"
+                    value={form.affiliateLabel}
+                    onChange={handleChange}
+                    placeholder="e.g. Try Notion free"
+                  />
+                </label>
+                <label>
+                  Affiliate URL
+                  <input
+                    name="affiliateUrl"
+                    type="url"
+                    value={form.affiliateUrl}
+                    onChange={handleChange}
+                    placeholder="https://…"
+                  />
+                </label>
+              </div>
+            )}
             <button type="submit" className="btn btn-primary" disabled={submitting}>
               {submitting ? 'Publishing…' : 'Publish blog'}
             </button>

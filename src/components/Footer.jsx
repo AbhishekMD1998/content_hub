@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import AdSense from './AdSense';
 
 function IconMail() {
   return (
@@ -57,6 +58,12 @@ export default function Footer() {
               <NavLink to="/articles">Articles</NavLink>
             </li>
             <li>
+              <NavLink to="/about">About</NavLink>
+            </li>
+            <li>
+              <NavLink to="/privacy">Privacy</NavLink>
+            </li>
+            <li>
               <NavLink to="/admin/login">Admin</NavLink>
             </li>
           </ul>
@@ -95,8 +102,13 @@ export default function Footer() {
         </div>
       </div>
 
+      <AdSense className="ad-slot-footer" />
+
       <div className="footer-bar">
-        <p>© {new Date().getFullYear()} Content Hub. All rights reserved.</p>
+        <p>
+          © {new Date().getFullYear()} Content Hub. All rights reserved. ·{' '}
+          <NavLink to="/privacy">Privacy</NavLink>
+        </p>
       </div>
     </footer>
   );

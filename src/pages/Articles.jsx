@@ -1,3 +1,4 @@
+import AdSense from '../components/AdSense';
 import PostCard from '../components/PostCard';
 import { useArticles } from '../context/ArticlesContext';
 
@@ -12,6 +13,8 @@ export default function Articles() {
           Curated long-form pieces loaded from the Spring Boot API and Supabase database.
         </p>
       </header>
+
+      <AdSense className="ad-slot-list" />
 
       {loading && <p className="empty-state">Loading articles…</p>}
       {error && (

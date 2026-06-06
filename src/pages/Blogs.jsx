@@ -1,3 +1,4 @@
+import AdSense from '../components/AdSense';
 import BlogLanguageToggle from '../components/BlogLanguageToggle';
 import PostCard from '../components/PostCard';
 import { useContent } from '../context/ContentContext';
@@ -24,6 +25,8 @@ export default function Blogs() {
         </div>
         <BlogLanguageToggle />
       </header>
+
+      <AdSense className="ad-slot-list" />
 
       {loading && <p className="empty-state">Loading blogs…</p>}
       {translating && !loading && (
@@ -60,6 +63,7 @@ export default function Blogs() {
               badge="Blog"
               coverImage={blog.coverImage}
               readTime={blog.readTime}
+              sponsored={blog.sponsored}
             />
           ))}
         </div>

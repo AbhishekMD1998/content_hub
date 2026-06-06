@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useBlogLanguage } from '../context/BlogLanguageContext';
 import { getTableOfContents } from '../lib/blogs';
+import AdSense from './AdSense';
+import AffiliateCta from './AffiliateCta';
 import BlogLanguageToggle from './BlogLanguageToggle';
 import BlogRenderer from './BlogRenderer';
+import SponsoredBadge from './SponsoredBadge';
 
 export default function BlogArticle({ blog }) {
   const { isKannada } = useBlogLanguage();
@@ -33,6 +36,7 @@ export default function BlogArticle({ blog }) {
           </div>
           <div className="blog-article-labels">
             <span className="badge">Blog</span>
+            {blog.sponsored && <SponsoredBadge />}
             {blog.category && <span className="tag">{blog.category}</span>}
             {blog.tags?.map((tag) => (
               <span key={tag} className="blog-tag-pill">
@@ -77,6 +81,15 @@ export default function BlogArticle({ blog }) {
           )}
 
           <div className="blog-body">
+            {blog.sponsored && !blog.affiliateUrl && (
+              <p className="affiliate-disclosure blog-sponsored-note">
+                This post is sponsored. We only partner with products and services we
+                think are genuinely useful.
+              </p>
+            )}
+
+            <AdSense className="ad-slot-inline" />
+
             {hasBlocks ? (
               <BlogRenderer blocks={blog.blocks} />
             ) : (
@@ -88,6 +101,12 @@ export default function BlogArticle({ blog }) {
                 ))}
               </div>
             )}
+
+            <AffiliateCta
+              label={blog.affiliateLabel}
+              url={blog.affiliateUrl}
+              sponsored={blog.sponsored}
+            />
           </div>
         </div>
       </div>

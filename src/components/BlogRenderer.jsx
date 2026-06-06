@@ -69,6 +69,21 @@ function Block({ block }) {
     case 'divider':
       return <hr className="blog-divider" />;
 
+    case 'affiliate':
+      return (
+        <aside className="affiliate-cta blog-affiliate-block" aria-label="Affiliate offer">
+          {block.disclosure && <p className="affiliate-disclosure">{block.disclosure}</p>}
+          <a
+            href={block.url}
+            className="btn btn-primary affiliate-cta-link"
+            target="_blank"
+            rel="sponsored noopener noreferrer"
+          >
+            {block.label || 'View offer'} →
+          </a>
+        </aside>
+      );
+
     default:
       return null;
   }

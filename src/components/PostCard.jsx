@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import SponsoredBadge from './SponsoredBadge';
 
 export default function PostCard({
   title,
@@ -10,6 +11,7 @@ export default function PostCard({
   badge,
   coverImage,
   readTime,
+  sponsored = false,
 }) {
   return (
     <article className={`post-card ${coverImage ? 'post-card-featured' : ''}`}>
@@ -21,6 +23,7 @@ export default function PostCard({
       <div className="post-card-body">
         <div className="post-card-meta">
           {badge && <span className="badge">{badge}</span>}
+          {sponsored && <SponsoredBadge />}
           {category && <span className="tag">{category}</span>}
           {readTime && <span className="post-card-read">{readTime}</span>}
           {date && <time dateTime={date}>{formatDate(date)}</time>}

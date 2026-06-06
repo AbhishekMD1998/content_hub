@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchArticle } from '../api/articles';
+import AdSense from '../components/AdSense';
 
 export default function ArticleDetail() {
   const { id } = useParams();
@@ -50,6 +51,7 @@ export default function ArticleDetail() {
           </time>
         </p>
       </header>
+      <AdSense className="ad-slot-inline" />
       <div className="detail-body">
         {article.content.split('\n\n').map((para, i) => (
           <p key={i}>{para}</p>

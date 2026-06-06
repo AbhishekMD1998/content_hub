@@ -7,5 +7,8 @@ public record CreateBlogRequest(
         String excerpt,
         String author,
         String category,
-        String content
+        String content,
+        Boolean sponsored,
+        String affiliateLabel,
+        String affiliateUrl
 ) {}

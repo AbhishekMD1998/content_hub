@@ -33,6 +33,9 @@ export function ContentProvider({ children }) {
       author: blog.author,
       category: blog.category,
       content: blog.content,
+      sponsored: blog.sponsored,
+      affiliateLabel: blog.affiliateLabel,
+      affiliateUrl: blog.affiliateUrl,
     });
     setBlogs((prev) => [created, ...prev]);
     return created;
