@@ -1,12 +1,11 @@
-# Deploy backend at https://render.com (free tier available)
-# Connect this repo and set env vars in the Render dashboard.
+# Render Blueprint — Spring Boot via Docker (Render has no native Java runtime)
+# Docs: https://render.com/docs/docker
 services:
   - type: web
     name: content-hub-api
-    runtime: java
+    runtime: docker
     rootDir: backend
-    buildCommand: ./mvnw clean package -DskipTests
-    startCommand: java -jar target/content-hub-api-1.0.0.jar
+    plan: free
     healthCheckPath: /api/articles
     envVars:
       - key: DATABASE_URL

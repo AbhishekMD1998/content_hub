@@ -3,7 +3,7 @@
 | Part | Platform | Why |
 |------|----------|-----|
 | **Frontend** (React) | [Vercel](https://vercel.com) | Static Vite build + SPA routing |
-| **Backend** (Spring Boot) | [Render](https://render.com) or Railway | Java long-running server |
+| **Backend** (Spring Boot) | [Render](https://render.com) (Docker) | JVM apps use `runtime: docker` on Render |
 | **Database** | [Supabase](https://supabase.com) | PostgreSQL (already configured) |
 
 Vercel **cannot** run the Spring Boot API — only the React app.
