@@ -1,8 +1,14 @@
 import AdSense from '../components/AdSense';
+import { useMeta } from '../hooks/useMeta';
 import PostCard from '../components/PostCard';
 import { useArticles } from '../context/ArticlesContext';
 
 export default function Articles() {
+  useMeta({
+    title: 'Articles',
+    description: 'Curated long-form articles on productivity, habits, and design — from the Content Hub database.',
+    url: '/articles',
+  });
   const { articles, loading, error } = useArticles();
 
   return (

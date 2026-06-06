@@ -1,8 +1,10 @@
 import LegalPage from '../components/LegalPage';
+import { useMeta } from '../hooks/useMeta';
 
 const SITE_URL = 'https://content-hub-pi-bay.vercel.app';
 
 export default function Privacy() {
+  useMeta({ title: 'Privacy Policy', description: 'Privacy policy for Content Hub — how we collect and use your data.', url: '/privacy' });
   return (
     <LegalPage title="Privacy Policy">
       <p>

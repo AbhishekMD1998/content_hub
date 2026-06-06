@@ -64,6 +64,9 @@ export default function Footer() {
               <NavLink to="/privacy">Privacy</NavLink>
             </li>
             <li>
+              <NavLink to="/sitemap">Sitemap</NavLink>
+            </li>
+            <li>
               <NavLink to="/admin/login">Admin</NavLink>
             </li>
           </ul>

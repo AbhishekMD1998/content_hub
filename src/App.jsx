@@ -17,6 +17,7 @@ import About from './pages/About';
 import AdminPanel from './pages/AdminPanel';
 import AuthCallback from './pages/AuthCallback';
 import Privacy from './pages/Privacy';
+import Sitemap from './pages/Sitemap';
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
                 <Route path="articles/:id" element={<ArticleDetail />} />
                 <Route path="about" element={<About />} />
                 <Route path="privacy" element={<Privacy />} />
+                <Route path="sitemap" element={<Sitemap />} />
                 <Route path="admin/login" element={<AdminLogin />} />
                 <Route
                   path="admin"

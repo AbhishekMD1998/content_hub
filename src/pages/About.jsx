@@ -1,6 +1,8 @@
 import LegalPage from '../components/LegalPage';
+import { useMeta } from '../hooks/useMeta';
 
 export default function About() {
+  useMeta({ title: 'About', description: 'Learn about Content Hub — our mission, content policy, and how to contact us.', url: '/about' });
   return (
     <LegalPage title="About Content Hub">
       <p>

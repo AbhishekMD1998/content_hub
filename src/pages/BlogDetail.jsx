@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchBlog } from '../api/blogs';
 import BlogArticle from '../components/BlogArticle';
+import RelatedPosts from '../components/RelatedPosts';
+import ShareButtons from '../components/ShareButtons';
+import { useContent } from '../context/ContentContext';
+import { useMeta } from '../hooks/useMeta';
 import { useTranslatedBlog } from '../hooks/useTranslatedBlog';
 
 export default function BlogDetail() {
@@ -55,6 +59,15 @@ export default function BlogDetail() {
 
 function BlogDetailContent({ blog }) {
   const { blog: displayBlog, translating, error: translateError } = useTranslatedBlog(blog);
+  const { blogs } = useContent();
+
+  useMeta({
+    title: blog.title,
+    description: blog.excerpt || `Read "${blog.title}" on Content Hub`,
+    image: blog.coverImage,
+    url: `/blogs/${blog.id}`,
+    type: 'article',
+  });
 
   return (
     <div className="page page-blog-detail">
@@ -69,6 +82,11 @@ function BlogDetailContent({ blog }) {
         </p>
       )}
       <BlogArticle blog={displayBlog} />
+      <ShareButtons
+        title={blog.title}
+        url={`https://content-hub-pi-bay.vercel.app/blogs/${blog.id}`}
+      />
+      <RelatedPosts current={blog} allPosts={blogs} basePath="/blogs" label="Blog" />
     </div>
   );
 }
