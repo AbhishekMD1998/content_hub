@@ -14,34 +14,41 @@ export default function Blogs() {
   const { blogs, loading, error } = useContent();
   const { blogs: displayBlogs, isKannada } = useTranslatedBlogList(blogs);
 
+  const postCount = displayBlogs.length;
+
   return (
-    <div className="page">
-      <header className="page-header page-header-with-actions">
-        <div>
+    <div className="page blogs-page">
+      <header className="blogs-hero">
+        <div className="blogs-hero-text">
+          <span className="blogs-eyebrow">Read &amp; learn</span>
           <h1>Blogs</h1>
-          <p className="lead">
-            Long-form posts from the database—seeded JSON content and admin-published posts.
+          <p className="blogs-lead">
+            Long-form posts on productivity, life, and work — in English and Kannada.
           </p>
+          {!loading && !error && postCount > 0 && (
+            <p className="blogs-count">
+              {postCount} {postCount === 1 ? 'post' : 'posts'}
+              {isKannada ? ' · ಕನ್ನಡ' : ' · English'}
+            </p>
+          )}
         </div>
         <BlogLanguageToggle />
       </header>
 
-      <AdSense className="ad-slot-list" />
-
-      {loading && <p className="empty-state">Loading blogs…</p>}
+      {loading && <p className="empty-state blogs-empty">Loading blogs…</p>}
       {error && (
-        <p className="empty-state" role="alert">
+        <p className="empty-state blogs-empty" role="alert">
           Could not load blogs. Is the backend running on port 8080? ({error})
         </p>
       )}
 
-      {!loading && !error && displayBlogs.length === 0 && (
-        <p className="empty-state">
+      {!loading && !error && postCount === 0 && (
+        <p className="empty-state blogs-empty">
           {isKannada ? 'No Kannada blogs published yet.' : 'No English blogs published yet.'}
         </p>
       )}
 
-      {!loading && !error && displayBlogs.length > 0 && (
+      {!loading && !error && postCount > 0 && (
         <div className="card-grid blogs-grid">
           {displayBlogs.map((blog) => (
             <PostCard
@@ -60,6 +67,8 @@ export default function Blogs() {
           ))}
         </div>
       )}
+
+      <AdSense className="ad-slot-list ad-slot-bottom" collapseWhenEmpty />
     </div>
   );
 }

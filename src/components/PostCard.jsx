@@ -28,10 +28,10 @@ export default function PostCard({
           {readTime && <span className="post-card-read">{readTime}</span>}
           {date && <time dateTime={date}>{formatDate(date)}</time>}
         </div>
-        <h2>
+        <h2 className="post-card-title">
           <Link to={to}>{title}</Link>
         </h2>
-        <p>{excerpt}</p>
+        <p className="post-card-excerpt">{excerpt}</p>
         {author && <p className="post-card-author">By {author}</p>}
         <Link to={to} className="read-more">
           Read more →
