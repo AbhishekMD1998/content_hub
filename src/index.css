@@ -824,6 +824,12 @@ code {
   margin-bottom: 0.5rem;
 }
 
+.btn-disabled {
+  opacity: 0.55;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
 .auth-divider {
   text-align: center;
   color: var(--text-muted);
