@@ -8,11 +8,11 @@ services:
     plan: free
     healthCheckPath: /api/articles
     envVars:
-      # Non-secret — committed so deploys never fall back to localhost
-      - key: DATABASE_URL
-        value: jdbc:postgresql://db.ddppgnmbiwibscgfxaxv.supabase.co:5432/postgres?sslmode=require
-      - key: DATABASE_USERNAME
-        value: postgres
+      # Render is IPv4-only — use Supavisor session pooler (not direct db.*.supabase.co)
+      - key: SUPABASE_PROJECT_REF
+        value: ddppgnmbiwibscgfxaxv
+      - key: SUPABASE_POOLER_REGION
+        value: ap-south-1
       - key: DATABASE_PASSWORD
         sync: false
       - key: JWT_SECRET

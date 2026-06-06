@@ -33,7 +33,9 @@ DATABASE_USERNAME=postgres
 DATABASE_PASSWORD=your_password_here
 ```
 
-Use the **direct** connection on port **5432** (not the pooler on 6543).
+**Local dev:** direct connection on port **5432** is fine if your network supports IPv6.
+
+**Render / IPv4-only hosts:** use the **Session pooler** (see `docs/RENDER_ENV.md`) — direct `db.*.supabase.co` fails with `Network unreachable`.
 
 Find your project ref in **Project Settings → Database** from the host `db.XXXX.supabase.co`.
 
@@ -60,4 +62,5 @@ Open http://localhost:5173 — admin login: `admin@contenthub.com` / `admin123`
 |-------|-----|
 | `no schema history table` | Update to latest code (`baseline-on-migrate` is enabled) and restart backend |
 | `Connection refused` | Check `DATABASE_URL`, password, and use port **5432** |
+| `Network unreachable` (Render) | Use Session pooler, not direct `db.*.supabase.co` — see `docs/RENDER_ENV.md` |
 | `zsh: event not found` | Run `bash scripts/start-backend.sh` — do not paste script lines into zsh |

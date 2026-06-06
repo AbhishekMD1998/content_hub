@@ -15,13 +15,15 @@ Vercel **cannot** run the Spring Boot API — only the React app.
 1. Push code to GitHub.
 2. [render.com](https://render.com) → **New → Blueprint** → connect `content_hub` repo.
 3. Uses `render.yaml` in the repo root.
-4. Set environment variables in Render:
+4. Set environment variables in Render (see `docs/RENDER_ENV.md`):
 
 | Variable | Example |
 |----------|---------|
-| `DATABASE_URL` | `jdbc:postgresql://db.xxx.supabase.co:5432/postgres?sslmode=require` |
-| `DATABASE_USERNAME` | `postgres` |
+| `SUPABASE_PROJECT_REF` | `ddppgnmbiwibscgfxaxv` (in `render.yaml`) |
+| `SUPABASE_POOLER_REGION` | `ap-south-1` (from Supabase **Connect → Session pooler**) |
 | `DATABASE_PASSWORD` | your Supabase password |
+
+> Do **not** use direct `db.xxx.supabase.co` on Render — IPv6-only; use the session pooler.
 | `JWT_SECRET` | long random string |
 | `FRONTEND_URL` | `https://your-app.vercel.app` (set after Vercel deploy) |
 | `CORS_ALLOWED_ORIGINS` | `https://your-app.vercel.app` |
