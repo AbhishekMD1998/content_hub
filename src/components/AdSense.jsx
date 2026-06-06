@@ -1,12 +1,20 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ADSENSE_CLIENT } from '../config/adsense';
 
 /**
  * Display ad unit. Omit slot for auto-format responsive ads once AdSense is approved.
  * @param {string} [slot] — data-ad-slot from AdSense → Ads → By ad unit
+ * @param {boolean} [collapseWhenEmpty] — hide the slot when no ad fills (avoids empty gaps)
  */
-export default function AdSense({ slot, className = '', label = 'Advertisement' }) {
+export default function AdSense({
+  slot,
+  className = '',
+  label = 'Advertisement',
+  collapseWhenEmpty = false,
+}) {
   const pushed = useRef(false);
+  const asideRef = useRef(null);
+  const [visible, setVisible] = useState(!collapseWhenEmpty);
 
   useEffect(() => {
     if (pushed.current) return;
@@ -18,8 +26,29 @@ export default function AdSense({ slot, className = '', label = 'Advertisement' 
     }
   }, []);
 
+  useEffect(() => {
+    if (!collapseWhenEmpty) return undefined;
+
+    const checkFilled = () => {
+      const ins = asideRef.current?.querySelector('ins.adsbygoogle');
+      const filled =
+        ins?.getAttribute('data-ad-status') === 'filled' ||
+        Boolean(asideRef.current?.querySelector('iframe'));
+      setVisible(filled);
+    };
+
+    const timers = [1200, 2500, 4000].map((ms) => setTimeout(checkFilled, ms));
+    return () => timers.forEach(clearTimeout);
+  }, [collapseWhenEmpty]);
+
+  if (!visible) return null;
+
   return (
-    <aside className={`ad-slot${className ? ` ${className}` : ''}`} aria-label={label}>
+    <aside
+      ref={asideRef}
+      className={`ad-slot${className ? ` ${className}` : ''}`}
+      aria-label={label}
+    >
       <ins
         className="adsbygoogle"
         style={{ display: 'block' }}
