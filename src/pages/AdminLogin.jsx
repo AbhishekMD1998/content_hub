@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { apiUrl } from '../api/config';
 import { useAuth } from '../context/AuthContext';
 
 export default function AdminLogin() {
@@ -58,7 +59,7 @@ export default function AdminLogin() {
           </button>
         </div>
 
-        <a href="/oauth2/authorization/google" className="btn btn-outline btn-pill btn-google">
+        <a href={apiUrl('/oauth2/authorization/google')} className="btn btn-outline btn-pill btn-google">
           Continue with Google
         </a>
 

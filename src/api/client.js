@@ -1,3 +1,5 @@
+import { apiUrl } from './config';
+
 const TOKEN_KEY = 'content-hub-token';
 
 export function getToken() {
@@ -23,7 +25,7 @@ export async function apiRequest(path, options = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(path, {
+  const response = await fetch(apiUrl(path), {
     ...options,
     headers,
   });

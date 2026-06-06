@@ -1,0 +1,27 @@
+# Deploy backend at https://render.com (free tier available)
+# Connect this repo and set env vars in the Render dashboard.
+services:
+  - type: web
+    name: content-hub-api
+    runtime: java
+    rootDir: backend
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/content-hub-api-1.0.0.jar
+    healthCheckPath: /api/articles
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
