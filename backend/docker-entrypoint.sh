@@ -13,8 +13,13 @@ fi
 
 if [ -z "$DATABASE_URL" ]; then
   echo "FATAL: Database connection not configured."
-  echo "Set SUPABASE_POOLER_HOST (from Supabase → Connect → Session pooler) + DATABASE_PASSWORD,"
-  echo "or set DATABASE_URL + DATABASE_USERNAME + DATABASE_PASSWORD in Render Environment."
+  echo ""
+  echo "Missing in Render → Environment:"
+  [ -z "$POOLER_HOST" ] && echo "  - SUPABASE_POOLER_HOST (Supabase → Connect → Session pooler → copy host)"
+  [ -z "$DATABASE_PASSWORD" ] && echo "  - DATABASE_PASSWORD (Supabase → Project Settings → Database)"
+  [ -n "$POOLER_HOST" ] && [ -z "$PROJECT_REF" ] && echo "  - SUPABASE_PROJECT_REF"
+  echo ""
+  echo "Or set DATABASE_URL + DATABASE_USERNAME + DATABASE_PASSWORD instead."
   exit 1
 fi
 
