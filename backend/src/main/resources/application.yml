@@ -5,9 +5,10 @@ spring:
   application:
     name: content-hub-api
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5433/content_hub}
-    username: ${DATABASE_USERNAME:contenthub}
-    password: ${DATABASE_PASSWORD:contenthub}
+    # Must be set in Render Environment (Supabase). Local: backend/.env
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
