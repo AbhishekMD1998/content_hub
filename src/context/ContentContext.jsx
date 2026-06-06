@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import * as blogsApi from '../api/blogs';
+import { mergeBlogs } from '../lib/blogs';
 
 const ContentContext = createContext(null);
 
@@ -13,10 +14,10 @@ export function ContentProvider({ children }) {
     setError(null);
     try {
       const data = await blogsApi.fetchBlogs();
-      setBlogs(data);
+      setBlogs(mergeBlogs(data));
     } catch (err) {
       setError(err.message);
-      setBlogs([]);
+      setBlogs(mergeBlogs([]));
     } finally {
       setLoading(false);
     }

@@ -12,6 +12,22 @@ export function isJsonBlog(blog) {
   return blog?.source === 'json' || JSON_IDS.has(blog?.id);
 }
 
+/** Resolve blog language: explicit field, kn-* id prefix, else English. */
+export function getBlogLanguage(blog) {
+  if (blog?.language === 'kn' || blog?.language === 'en') {
+    return blog.language;
+  }
+  if (blog?.id?.startsWith('kn-')) {
+    return 'kn';
+  }
+  return 'en';
+}
+
+export function filterBlogsByLanguage(blogs, language) {
+  const lang = language === 'kn' ? 'kn' : 'en';
+  return blogs.filter((blog) => getBlogLanguage(blog) === lang);
+}
+
 export function getTableOfContents(blocks = []) {
   return blocks.filter((b) => b.type === 'heading' && b.level === 2 && b.id);
 }

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchBlog } from '../api/blogs';
+import { filterBlogsByLanguage, jsonBlogs } from '../lib/blogs';
+import { useBlogLanguage } from '../context/BlogLanguageContext';
 import BlogArticle from '../components/BlogArticle';
 import RelatedPosts from '../components/RelatedPosts';
 import ShareButtons from '../components/ShareButtons';
@@ -31,6 +33,13 @@ export default function BlogDetail() {
     window.scrollTo(0, 0);
     setLoading(true);
     setError(null);
+    const jsonBlog = jsonBlogs.find((b) => b.id === id);
+    if (jsonBlog) {
+      setBlog(jsonBlog);
+      setLoading(false);
+      return;
+    }
+
     fetchBlog(id)
       .then(setBlog)
       .catch((err) => setError(err.message))
@@ -58,35 +67,41 @@ export default function BlogDetail() {
 }
 
 function BlogDetailContent({ blog }) {
-  const { blog: displayBlog, translating, error: translateError } = useTranslatedBlog(blog);
+  const { blog: displayBlog, error: languageError } = useTranslatedBlog(blog);
   const { blogs } = useContent();
+  const { language } = useBlogLanguage();
+  const relatedPosts = filterBlogsByLanguage(blogs, language);
 
   useMeta({
-    title: blog.title,
-    description: blog.excerpt || `Read "${blog.title}" on Content Hub`,
-    image: blog.coverImage,
-    url: `/blogs/${blog.id}`,
+    title: displayBlog?.title || 'Blog',
+    description: displayBlog?.excerpt || 'Read on Content Hub',
+    image: displayBlog?.coverImage,
+    url: displayBlog ? `/blogs/${displayBlog.id}` : '/blogs',
     type: 'article',
   });
 
+  if (!displayBlog) {
+    return (
+      <div className="page">
+        <p className="empty-state">{languageError}</p>
+        <Link to="/blogs">← Back to blogs</Link>
+      </div>
+    );
+  }
+
   return (
     <div className="page page-blog-detail">
-      {translating && (
-        <p className="empty-state blog-translate-status" role="status">
-          Translating to Kannada…
-        </p>
-      )}
-      {translateError && (
-        <p className="form-error" role="alert">
-          {translateError}
-        </p>
-      )}
       <BlogArticle blog={displayBlog} />
       <ShareButtons
-        title={blog.title}
-        url={`https://content-hub-pi-bay.vercel.app/blogs/${blog.id}`}
+        title={displayBlog.title}
+        url={`https://content-hub-pi-bay.vercel.app/blogs/${displayBlog.id}`}
       />
-      <RelatedPosts current={blog} allPosts={blogs} basePath="/blogs" label="Blog" />
+      <RelatedPosts
+        current={displayBlog}
+        allPosts={relatedPosts}
+        basePath="/blogs"
+        label="Blog"
+      />
     </div>
   );
 }

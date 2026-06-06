@@ -12,12 +12,7 @@ export default function Blogs() {
     url: '/blogs',
   });
   const { blogs, loading, error } = useContent();
-  const {
-    blogs: displayBlogs,
-    translating,
-    error: translateError,
-    isKannada,
-  } = useTranslatedBlogList(blogs);
+  const { blogs: displayBlogs, isKannada } = useTranslatedBlogList(blogs);
 
   return (
     <div className="page">
@@ -26,7 +21,6 @@ export default function Blogs() {
           <h1>Blogs</h1>
           <p className="lead">
             Long-form posts from the database—seeded JSON content and admin-published posts.
-            {isKannada && ' Reading in Kannada.'}
           </p>
         </div>
         <BlogLanguageToggle />
@@ -35,27 +29,19 @@ export default function Blogs() {
       <AdSense className="ad-slot-list" />
 
       {loading && <p className="empty-state">Loading blogs…</p>}
-      {translating && !loading && (
-        <p className="empty-state" role="status">
-          Translating blogs to Kannada…
-        </p>
-      )}
-      {translateError && (
-        <p className="form-error" role="alert">
-          {translateError}
-        </p>
-      )}
       {error && (
         <p className="empty-state" role="alert">
           Could not load blogs. Is the backend running on port 8080? ({error})
         </p>
       )}
 
-      {!loading && !error && !translating && displayBlogs.length === 0 && (
-        <p className="empty-state">No blogs published yet.</p>
+      {!loading && !error && displayBlogs.length === 0 && (
+        <p className="empty-state">
+          {isKannada ? 'No Kannada blogs published yet.' : 'No English blogs published yet.'}
+        </p>
       )}
 
-      {!loading && !error && !translating && displayBlogs.length > 0 && (
+      {!loading && !error && displayBlogs.length > 0 && (
         <div className="card-grid blogs-grid">
           {displayBlogs.map((blog) => (
             <PostCard

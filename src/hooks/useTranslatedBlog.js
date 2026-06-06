@@ -1,51 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useBlogLanguage } from '../context/BlogLanguageContext';
-import { translateBlog } from '../lib/translateBlog';
+import { getBlogLanguage } from '../lib/blogs';
 
 export function useTranslatedBlog(blog) {
   const { language, isKannada } = useBlogLanguage();
-  const [displayBlog, setDisplayBlog] = useState(blog);
-  const [translating, setTranslating] = useState(false);
-  const [error, setError] = useState('');
 
-  useEffect(() => {
-    if (!blog) {
-      setDisplayBlog(null);
-      return;
-    }
+  const matchesLanguage = useMemo(() => {
+    if (!blog) return false;
+    const blogLang = getBlogLanguage(blog);
+    return blogLang === (language === 'kn' ? 'kn' : 'en');
+  }, [blog, language]);
 
-    if (!isKannada) {
-      setDisplayBlog(blog);
-      setError('');
-      return;
-    }
+  const error = useMemo(() => {
+    if (!blog || matchesLanguage) return '';
+    return language === 'kn'
+      ? 'This post is available in English only. Switch to English to read it.'
+      : 'This post is available in Kannada only. Switch to ಕನ್ನಡ to read it.';
+  }, [blog, language, matchesLanguage]);
 
-    let cancelled = false;
-    setTranslating(true);
-    setError('');
-
-    translateBlog(blog)
-      .then((result) => {
-        if (!cancelled) {
-          setDisplayBlog(result);
-        }
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setDisplayBlog(blog);
-          setError(err.message || 'Could not translate this blog.');
-        }
-      })
-      .finally(() => {
-        if (!cancelled) {
-          setTranslating(false);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [blog, isKannada, language]);
-
-  return { blog: displayBlog, translating, error, isKannada };
+  return {
+    blog: matchesLanguage ? blog : null,
+    translating: false,
+    error,
+    isKannada,
+    matchesLanguage,
+  };
 }

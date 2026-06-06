@@ -17,6 +17,7 @@
       "properties": {
         "id": { "type": "string", "description": "Unique slug-style id used in /blogs/:id" },
         "source": { "const": "json", "description": "Marks posts shipped from JSON (read-only in admin)" },
+        "language": { "enum": ["en", "kn"], "description": "Post language — en for English, kn for Kannada" },
         "title": { "type": "string" },
         "excerpt": { "type": "string" },
         "author": { "type": "string" },
