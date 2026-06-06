@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ArticlesProvider } from './context/ArticlesContext';
+import { BlogLanguageProvider } from './context/BlogLanguageContext';
 import { ContentProvider } from './context/ContentContext';
 import Layout from './components/Layout';
 import AdminRoute from './components/AdminRoute';
@@ -20,7 +21,8 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <ArticlesProvider>
-          <ContentProvider>
+          <BlogLanguageProvider>
+            <ContentProvider>
             <Routes>
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/" element={<Layout />}>
@@ -49,7 +51,8 @@ export default function App() {
               </Route>
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-          </ContentProvider>
+            </ContentProvider>
+          </BlogLanguageProvider>
         </ArticlesProvider>
       </AuthProvider>
     </BrowserRouter>

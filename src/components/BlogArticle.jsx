@@ -1,13 +1,16 @@
 import { Link } from 'react-router-dom';
+import { useBlogLanguage } from '../context/BlogLanguageContext';
 import { getTableOfContents } from '../lib/blogs';
+import BlogLanguageToggle from './BlogLanguageToggle';
 import BlogRenderer from './BlogRenderer';
 
 export default function BlogArticle({ blog }) {
+  const { isKannada } = useBlogLanguage();
   const toc = getTableOfContents(blog.blocks);
   const hasBlocks = Boolean(blog.blocks?.length);
 
   return (
-    <article className="blog-article">
+    <article className={`blog-article${isKannada ? ' blog-article-kn' : ''}`}>
       <div className="blog-progress" aria-hidden="true">
         <div className="blog-progress-bar" id="blog-progress-bar" />
       </div>
@@ -25,6 +28,9 @@ export default function BlogArticle({ blog }) {
         </Link>
 
         <header className="blog-article-header">
+          <div className="blog-article-header-top">
+            <BlogLanguageToggle compact />
+          </div>
           <div className="blog-article-labels">
             <span className="badge">Blog</span>
             {blog.category && <span className="tag">{blog.category}</span>}

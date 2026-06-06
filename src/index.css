@@ -1402,6 +1402,64 @@ code {
   color: var(--text-muted);
 }
 
+.page-header-with-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.blog-lang-toggle {
+  display: inline-flex;
+  padding: 0.2rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  gap: 0.15rem;
+}
+
+.blog-lang-toggle button {
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.blog-lang-toggle button.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.blog-lang-toggle-compact button {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.7rem;
+}
+
+.blog-article-header-top {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.blog-article-kn .blog-article-title,
+.blog-article-kn .blog-body,
+.blog-article-kn .blog-toc,
+.blog-lang-kn .blogs-grid .post-card-title,
+.blog-lang-kn .blogs-grid .post-card-excerpt {
+  font-family: 'Noto Sans Kannada', 'DM Sans', sans-serif;
+}
+
+.blog-translate-status {
+  margin-bottom: 1rem;
+}
+
 .admin-docs-page .page-header {
   margin-bottom: 1.5rem;
 }

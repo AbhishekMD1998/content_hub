@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchBlog } from '../api/blogs';
 import BlogArticle from '../components/BlogArticle';
+import { useTranslatedBlog } from '../hooks/useTranslatedBlog';
 
 export default function BlogDetail() {
   const { id } = useParams();
@@ -49,9 +50,25 @@ export default function BlogDetail() {
     );
   }
 
+  return <BlogDetailContent blog={blog} />;
+}
+
+function BlogDetailContent({ blog }) {
+  const { blog: displayBlog, translating, error: translateError } = useTranslatedBlog(blog);
+
   return (
     <div className="page page-blog-detail">
-      <BlogArticle blog={blog} />
+      {translating && (
+        <p className="empty-state blog-translate-status" role="status">
+          Translating to Kannada…
+        </p>
+      )}
+      {translateError && (
+        <p className="form-error" role="alert">
+          {translateError}
+        </p>
+      )}
+      <BlogArticle blog={displayBlog} />
     </div>
   );
 }

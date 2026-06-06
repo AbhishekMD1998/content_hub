@@ -51,6 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/articles", "/api/articles/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/blogs", "/api/blogs/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/translate").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/blogs/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/blogs/**").hasAnyRole("ADMIN", "USER")
