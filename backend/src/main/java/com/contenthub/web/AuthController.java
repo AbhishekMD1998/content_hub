@@ -8,6 +8,7 @@ import com.contenthub.web.dto.AuthDtos.LoginRequest;
 import com.contenthub.web.dto.AuthDtos.SignupRequest;
 import com.contenthub.web.dto.AuthDtos.UserResponse;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +56,13 @@ public class AuthController {
     @GetMapping("/google/url")
     public Map<String, String> googleAuthUrl() {
         return Map.of("url", "/oauth2/authorization/google");
+    }
+
+    @GetMapping("/config")
+    public Map<String, Object> config(
+            @Value("${spring.security.oauth2.client.registration.google.client-id:}") String googleClientId
+    ) {
+        boolean googleEnabled = googleClientId != null && !googleClientId.isBlank();
+        return Map.of("googleEnabled", googleEnabled);
     }
 }

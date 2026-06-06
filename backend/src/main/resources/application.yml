@@ -1,5 +1,7 @@
 server:
   port: ${PORT:8080}
+  # Required behind Render/nginx so Google OAuth redirect URIs use https
+  forward-headers-strategy: framework
 
 spring:
   application:

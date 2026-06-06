@@ -25,10 +25,19 @@ export async function apiRequest(path, options = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(apiUrl(path), {
-    ...options,
-    headers,
-  });
+  let response;
+  try {
+    response = await fetch(apiUrl(path), {
+      ...options,
+      headers,
+    });
+  } catch {
+    const base = apiUrl('');
+    const hint = base
+      ? `Cannot reach API at ${base}.`
+      : 'Cannot reach API. Set VITE_API_BASE_URL to your Render URL in Vercel (or use npm run dev locally).';
+    throw new Error(hint);
+  }
 
   if (!response.ok) {
     let message = response.statusText;

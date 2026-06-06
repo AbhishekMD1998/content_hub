@@ -17,3 +17,7 @@ export function login({ email, password }) {
 export function fetchMe() {
   return apiRequest('/api/auth/me');
 }
+
+export function fetchAuthConfig() {
+  return apiRequest('/api/auth/config');
+}

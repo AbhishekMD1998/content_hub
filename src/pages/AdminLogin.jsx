@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { apiUrl } from '../api/config';
+import { fetchAuthConfig } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 
 export default function AdminLogin() {
@@ -14,6 +15,13 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState('');
+  const [googleEnabled, setGoogleEnabled] = useState(false);
+
+  useEffect(() => {
+    fetchAuthConfig()
+      .then((config) => setGoogleEnabled(Boolean(config.googleEnabled)))
+      .catch(() => setGoogleEnabled(false));
+  }, []);
 
   if (isAuthenticated) {
     return <Navigate to={from} replace />;
@@ -59,11 +67,17 @@ export default function AdminLogin() {
           </button>
         </div>
 
-        <a href={apiUrl('/oauth2/authorization/google')} className="btn btn-outline btn-pill btn-google">
-          Continue with Google
-        </a>
-
-        <p className="auth-divider">or</p>
+        {googleEnabled && (
+          <>
+            <a
+              href={apiUrl('/oauth2/authorization/google')}
+              className="btn btn-outline btn-pill btn-google"
+            >
+              Continue with Google
+            </a>
+            <p className="auth-divider">or</p>
+          </>
+        )}
 
         <form onSubmit={handleSubmit} className="admin-form">
           {mode === 'signup' && (

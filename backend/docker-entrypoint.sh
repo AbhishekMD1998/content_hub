@@ -40,5 +40,14 @@ if [ -z "$DATABASE_USERNAME" ] || [ -z "$DATABASE_PASSWORD" ]; then
   exit 1
 fi
 
+if [ -n "$GOOGLE_CLIENT_ID" ]; then
+  if [ -n "$SPRING_PROFILES_ACTIVE" ]; then
+    export SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE},oauth"
+  else
+    export SPRING_PROFILES_ACTIVE="oauth"
+  fi
+  echo "Google OAuth enabled (profile: oauth)"
+fi
+
 echo "Starting API (database host: $(echo "$DATABASE_URL" | sed -E 's|jdbc:postgresql://([^:/]+).*|\1|'), user: $DATABASE_USERNAME)"
 exec java -jar app.jar
