@@ -1,10 +1,16 @@
 import AdSense from '../components/AdSense';
+import { useMeta } from '../hooks/useMeta';
 import BlogLanguageToggle from '../components/BlogLanguageToggle';
 import PostCard from '../components/PostCard';
 import { useContent } from '../context/ContentContext';
 import { useTranslatedBlogList } from '../hooks/useTranslatedBlogList';
 
 export default function Blogs() {
+  useMeta({
+    title: 'Blogs',
+    description: 'Long-form blog posts on productivity, design, and everyday work. Available in English and Kannada.',
+    url: '/blogs',
+  });
   const { blogs, loading, error } = useContent();
   const {
     blogs: displayBlogs,

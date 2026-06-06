@@ -2,8 +2,10 @@ import { Link } from 'react-router-dom';
 import { useArticles } from '../context/ArticlesContext';
 import { useContent } from '../context/ContentContext';
 import PostCard from '../components/PostCard';
+import { useMeta } from '../hooks/useMeta';
 
 export default function Dashboard() {
+  useMeta({ url: '/' });
   const { blogs } = useContent();
   const { articles } = useArticles();
   const recentBlogs = [...blogs]
