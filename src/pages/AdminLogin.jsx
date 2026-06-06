@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { apiUrl } from '../api/config';
-import { fetchAuthConfig } from '../api/auth';
+import { API_BASE_URL, apiUrl } from '../api/config';
 import { useAuth } from '../context/AuthContext';
 
 export default function AdminLogin() {
@@ -15,13 +14,7 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState('');
-  const [googleEnabled, setGoogleEnabled] = useState(false);
-
-  useEffect(() => {
-    fetchAuthConfig()
-      .then((config) => setGoogleEnabled(Boolean(config.googleEnabled)))
-      .catch(() => setGoogleEnabled(false));
-  }, []);
+  const apiConfigured = Boolean(API_BASE_URL) || import.meta.env.DEV;
 
   if (isAuthenticated) {
     return <Navigate to={from} replace />;
@@ -67,17 +60,20 @@ export default function AdminLogin() {
           </button>
         </div>
 
-        {googleEnabled && (
-          <>
-            <a
-              href={apiUrl('/oauth2/authorization/google')}
-              className="btn btn-outline btn-pill btn-google"
-            >
-              Continue with Google
-            </a>
-            <p className="auth-divider">or</p>
-          </>
+        <a
+          href={apiUrl('/oauth2/authorization/google')}
+          className={`btn btn-outline btn-pill btn-google${apiConfigured ? '' : ' btn-disabled'}`}
+          aria-disabled={!apiConfigured}
+          onClick={apiConfigured ? undefined : (e) => e.preventDefault()}
+        >
+          Continue with Google
+        </a>
+        {!apiConfigured && (
+          <p className="auth-hint form-error" role="alert">
+            API not configured. Set <code>VITE_API_BASE_URL</code> on Vercel to your Render URL.
+          </p>
         )}
+        <p className="auth-divider">or</p>
 
         <form onSubmit={handleSubmit} className="admin-form">
           {mode === 'signup' && (
