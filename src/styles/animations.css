@@ -1,0 +1,319 @@
+/* —— Motion tokens —— */
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --duration-fast: 0.18s;
+  --duration-med: 0.4s;
+  --duration-slow: 0.7s;
+}
+
+/* —— Page enter (route change) —— */
+.page-enter {
+  animation: page-enter var(--duration-med) var(--ease-out) both;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* —— Staggered list items —— */
+.animate-stagger {
+  opacity: 0;
+  animation: stagger-in var(--duration-med) var(--ease-out) both;
+  animation-delay: calc(var(--stagger-i, 0) * 70ms + 80ms);
+}
+
+@keyframes stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* —— Scroll reveal —— */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* —— Hero (dashboard) —— */
+.hero-animate .eyebrow {
+  animation: fade-up var(--duration-med) var(--ease-out) 0.05s both;
+}
+
+.hero-animate .hero-title {
+  animation: fade-up var(--duration-slow) var(--ease-out) 0.12s both;
+}
+
+.hero-animate .hero-lead {
+  animation: fade-up var(--duration-med) var(--ease-out) 0.22s both;
+}
+
+.hero-animate .hero-actions {
+  animation: fade-up var(--duration-med) var(--ease-out) 0.32s both;
+}
+
+.hero-animate .hero-card {
+  animation: fade-up-scale var(--duration-slow) var(--ease-out) 0.28s both;
+}
+
+.hero-blob {
+  animation: blob-float 9s ease-in-out infinite alternate;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-up-scale {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes blob-float {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(-12px, 16px) scale(1.04);
+  }
+}
+
+/* —— Blog / article detail —— */
+.detail-enter .blog-cover,
+.detail-enter .blog-article-header,
+.detail-enter .blog-body,
+.detail-enter .share-buttons,
+.detail-enter .related-posts {
+  animation: fade-up var(--duration-med) var(--ease-out) both;
+}
+
+.detail-enter.detail-page .back-link {
+  animation: fade-up var(--duration-med) var(--ease-out) 0.04s both;
+}
+
+.detail-enter.detail-page .detail-header {
+  animation: fade-up var(--duration-med) var(--ease-out) 0.1s both;
+}
+
+.detail-enter.detail-page .detail-body {
+  animation: fade-up var(--duration-med) var(--ease-out) 0.18s both;
+}
+
+.detail-enter.detail-page .share-buttons {
+  animation: fade-up var(--duration-med) var(--ease-out) 0.26s both;
+}
+
+.detail-enter .blog-cover {
+  animation-delay: 0.05s;
+}
+
+.detail-enter .blog-article-header {
+  animation-delay: 0.12s;
+}
+
+.detail-enter .blog-body {
+  animation-delay: 0.2s;
+}
+
+.detail-enter .share-buttons {
+  animation-delay: 0.28s;
+}
+
+.detail-enter .related-posts {
+  animation-delay: 0.34s;
+}
+
+/* —— Loading pulse —— */
+.loading-pulse {
+  animation: loading-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes loading-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* —— Language toggle sliding pill —— */
+.blog-lang-toggle {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+}
+
+.blog-lang-indicator {
+  position: absolute;
+  top: 0.2rem;
+  left: 0.2rem;
+  width: calc(50% - 0.2rem);
+  height: calc(100% - 0.4rem);
+  border-radius: var(--radius-pill);
+  background: var(--green-700);
+  box-shadow: 0 2px 8px rgba(59, 83, 68, 0.25);
+  transition: transform 0.28s var(--ease-spring);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blog-lang-toggle button {
+  position: relative;
+  z-index: 1;
+  transition: color 0.2s ease;
+}
+
+.blog-lang-toggle button.active {
+  background: transparent;
+  color: #fff;
+}
+
+/* —— Header scroll state —— */
+.site-header {
+  transition:
+    box-shadow var(--duration-fast) ease,
+    background var(--duration-fast) ease;
+}
+
+.site-header-scrolled {
+  box-shadow: 0 4px 24px rgba(44, 64, 52, 0.08);
+  background: rgba(247, 245, 240, 0.97);
+}
+
+/* —— Nav underline slide —— */
+.main-nav a {
+  position: relative;
+  transition: color var(--duration-fast) ease;
+}
+
+.main-nav a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  background: var(--green-700);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s var(--ease-out);
+}
+
+.main-nav a:hover::after,
+.main-nav a.active::after {
+  transform: scaleX(1);
+}
+
+.main-nav a.active {
+  border-bottom-color: transparent;
+}
+
+/* —— Buttons —— */
+.btn {
+  transition:
+    background var(--duration-fast) ease,
+    color var(--duration-fast) ease,
+    box-shadow var(--duration-fast) ease,
+    transform 0.12s var(--ease-spring);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.brand-mark {
+  transition: transform 0.25s var(--ease-spring), box-shadow 0.25s ease;
+}
+
+.brand:hover .brand-mark {
+  transform: rotate(-6deg) scale(1.04);
+  box-shadow: var(--shadow-md);
+}
+
+/* —— Share copy success —— */
+.share-btn-copied {
+  animation: pop-in 0.35s var(--ease-spring);
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.92);
+  }
+  60% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* —— Progress bar glow —— */
+.blog-progress-bar {
+  transition: width 0.12s linear;
+  box-shadow: 0 0 8px rgba(59, 83, 68, 0.35);
+}
+
+/* —— Reduced motion —— */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal,
+  .reveal-visible,
+  .animate-stagger,
+  .page-enter {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .hero-blob {
+    animation: none;
+  }
+
+  .blog-lang-indicator {
+    transition: none;
+  }
+}

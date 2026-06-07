@@ -1,0 +1,138 @@
+/* —— Cartoon cursor mascot —— */
+body.cartoon-cursor-on,
+body.cartoon-cursor-on a,
+body.cartoon-cursor-on button,
+body.cartoon-cursor-on input,
+body.cartoon-cursor-on textarea,
+body.cartoon-cursor-on select,
+body.cartoon-cursor-on label,
+body.cartoon-cursor-on [role='button'] {
+  cursor: none !important;
+}
+
+.cartoon-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  will-change: transform;
+}
+
+.cartoon-cursor.is-visible {
+  opacity: 1;
+}
+
+.cursor-mascot {
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(36, 53, 40, 0.2));
+  transition: transform 0.12s var(--ease-spring, cubic-bezier(0.34, 1.4, 0.64, 1));
+}
+
+.cartoon-cursor.is-clicking .cursor-mascot {
+  transform: scale(0.86) translateY(2px);
+}
+
+.cartoon-cursor.is-moving .cursor-legs {
+  animation: cursor-walk 0.28s ease-in-out infinite alternate;
+}
+
+.cartoon-cursor.is-moving .cursor-mascot {
+  animation: cursor-bounce 0.45s ease-in-out infinite alternate;
+}
+
+.cartoon-cursor.is-hovering .cursor-hand {
+  opacity: 1;
+  animation: cursor-wave 0.55s ease-in-out infinite;
+}
+
+.cartoon-cursor.is-hovering .cursor-book {
+  opacity: 0.35;
+}
+
+.cartoon-cursor .cursor-hand {
+  opacity: 0;
+  transform-origin: 48px 34px;
+  transition: opacity 0.2s ease;
+}
+
+.cartoon-cursor .cursor-eye {
+  animation: cursor-blink 4.5s ease infinite;
+}
+
+.cartoon-cursor .cursor-pupil-l {
+  animation: cursor-look 3s ease-in-out infinite alternate;
+}
+
+.cartoon-cursor .cursor-pupil-r {
+  animation: cursor-look 3s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes cursor-walk {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes cursor-bounce {
+  from {
+    transform: translateY(0) rotate(-2deg);
+  }
+  to {
+    transform: translateY(-4px) rotate(2deg);
+  }
+}
+
+@keyframes cursor-wave {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(18deg);
+  }
+}
+
+@keyframes cursor-blink {
+  0%,
+  42%,
+  44%,
+  100% {
+    transform: scaleY(1);
+  }
+  43% {
+    transform: scaleY(0.12);
+  }
+}
+
+@keyframes cursor-look {
+  from {
+    transform: translateX(-0.5px);
+  }
+  to {
+    transform: translateX(0.8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.cartoon-cursor-on,
+  body.cartoon-cursor-on a,
+  body.cartoon-cursor-on button {
+    cursor: auto !important;
+  }
+
+  .cartoon-cursor {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .cartoon-cursor {
+    display: none;
+  }
+}

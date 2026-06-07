@@ -1589,7 +1589,6 @@ code {
 }
 
 .blog-lang-toggle {
-  display: inline-flex;
   padding: 0.2rem;
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -1607,12 +1606,6 @@ code {
   padding: 0.45rem 0.85rem;
   border-radius: 999px;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.blog-lang-toggle button.active {
-  background: var(--accent);
-  color: #fff;
 }
 
 .blog-lang-toggle-compact button {

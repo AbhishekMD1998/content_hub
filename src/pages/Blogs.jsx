@@ -35,7 +35,7 @@ export default function Blogs() {
         <BlogLanguageToggle />
       </header>
 
-      {loading && <p className="empty-state blogs-empty">Loading blogs…</p>}
+      {loading && <p className="empty-state blogs-empty loading-pulse">Loading blogs…</p>}
       {error && (
         <p className="empty-state blogs-empty" role="alert">
           Could not load blogs. Is the backend running on port 8080? ({error})
@@ -50,9 +50,11 @@ export default function Blogs() {
 
       {!loading && !error && postCount > 0 && (
         <div className="card-grid blogs-grid">
-          {displayBlogs.map((blog) => (
+          {displayBlogs.map((blog, i) => (
             <PostCard
               key={blog.id}
+              index={i}
+              animate
               title={blog.title}
               excerpt={blog.excerpt}
               author={blog.author}

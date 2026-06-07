@@ -49,7 +49,7 @@ export default function BlogDetail() {
   if (loading) {
     return (
       <div className="page">
-        <p className="empty-state">Loading blog…</p>
+        <p className="empty-state loading-pulse">Loading blog…</p>
       </div>
     );
   }
@@ -90,7 +90,7 @@ function BlogDetailContent({ blog }) {
   }
 
   return (
-    <div className="page page-blog-detail">
+    <div className="page page-blog-detail detail-enter">
       <BlogArticle blog={displayBlog} />
       <ShareButtons
         title={displayBlog.title}

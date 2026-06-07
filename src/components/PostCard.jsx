@@ -12,9 +12,14 @@ export default function PostCard({
   coverImage,
   readTime,
   sponsored = false,
+  index = 0,
+  animate = false,
 }) {
   return (
-    <article className={`post-card ${coverImage ? 'post-card-featured' : ''}`}>
+    <article
+      className={`post-card ${coverImage ? 'post-card-featured' : ''}${animate ? ' animate-stagger' : ''}`}
+      style={animate ? { '--stagger-i': index } : undefined}
+    >
       {coverImage && (
         <Link to={to} className="post-card-cover" tabIndex={-1} aria-hidden="true">
           <img src={coverImage} alt="" loading="lazy" />

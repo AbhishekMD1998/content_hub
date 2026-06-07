@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
+import Reveal from '../components/Reveal';
+import PostCard from '../components/PostCard';
 import { useArticles } from '../context/ArticlesContext';
 import { useContent } from '../context/ContentContext';
-import PostCard from '../components/PostCard';
 import { useMeta } from '../hooks/useMeta';
 
 export default function Dashboard() {
@@ -17,7 +18,7 @@ export default function Dashboard() {
 
   return (
     <div className="page">
-      <section className="hero">
+      <section className="hero hero-animate">
         <div className="hero-blob" aria-hidden="true" />
         <div className="hero-grid">
           <div className="hero-copy">
@@ -53,30 +54,30 @@ export default function Dashboard() {
       </section>
 
       <section className="stats-grid" aria-label="Content statistics">
-        <div className="stat-card">
+        <Reveal className="stat-card" delay={0}>
           <span className="stat-value">{blogs.length}</span>
           <span className="stat-label">Blogs</span>
           <Link to="/blogs" className="stat-link">
             View all
           </Link>
-        </div>
-        <div className="stat-card">
+        </Reveal>
+        <Reveal className="stat-card" delay={80}>
           <span className="stat-value">{articles.length}</span>
           <span className="stat-label">Articles</span>
           <Link to="/articles" className="stat-link">
             View all
           </Link>
-        </div>
-        <div className="stat-card stat-card-accent">
+        </Reveal>
+        <Reveal className="stat-card stat-card-accent" delay={160}>
           <span className="stat-value">Admin</span>
           <span className="stat-label">Publish blogs</span>
           <Link to="/admin" className="stat-link">
             Go to admin →
           </Link>
-        </div>
+        </Reveal>
       </section>
 
-      <section className="section-block">
+      <Reveal as="section" className="section-block" delay={100}>
         <div className="section-head">
           <h2>Recent blogs</h2>
           <Link to="/blogs">See all blogs</Link>
@@ -85,9 +86,11 @@ export default function Dashboard() {
           <p className="empty-state">No blogs yet. Admins can add the first post.</p>
         ) : (
           <div className="card-grid">
-            {recentBlogs.map((blog) => (
+            {recentBlogs.map((blog, i) => (
               <PostCard
                 key={blog.id}
+                index={i}
+                animate
                 title={blog.title}
                 excerpt={blog.excerpt}
                 author={blog.author}
@@ -101,17 +104,19 @@ export default function Dashboard() {
             ))}
           </div>
         )}
-      </section>
+      </Reveal>
 
-      <section className="section-block">
+      <Reveal as="section" className="section-block" delay={160}>
         <div className="section-head">
           <h2>Recent articles</h2>
           <Link to="/articles">See all articles</Link>
         </div>
         <div className="card-grid">
-          {recentArticles.map((article) => (
+          {recentArticles.map((article, i) => (
             <PostCard
               key={article.id}
+              index={i}
+              animate
               title={article.title}
               excerpt={article.excerpt}
               author={article.author}
@@ -122,7 +127,7 @@ export default function Dashboard() {
             />
           ))}
         </div>
-      </section>
+      </Reveal>
     </div>
   );
 }

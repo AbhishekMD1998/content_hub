@@ -9,6 +9,11 @@ export default function BlogLanguageToggle({ compact = false }) {
       role="group"
       aria-label="Blog language"
     >
+      <span
+        className="blog-lang-indicator"
+        aria-hidden="true"
+        style={{ transform: language === 'kn' ? 'translateX(100%)' : 'translateX(0)' }}
+      />
       <button
         type="button"
         className={language === 'en' ? 'active' : ''}

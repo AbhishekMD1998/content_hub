@@ -27,8 +27,8 @@ export default function RelatedPosts({ current, allPosts, basePath = '/blogs', l
     <aside className="related-posts" aria-label="Related posts">
       <h2 className="related-posts-title">You might also like</h2>
       <ul className="related-posts-list">
-        {related.map((post) => (
-          <li key={post.id}>
+        {related.map((post, i) => (
+          <li key={post.id} className="animate-stagger" style={{ '--stagger-i': i }}>
             <Link to={`${basePath}/${post.id}`} className="related-post-card">
               {post.coverImage && (
                 <img

@@ -22,7 +22,7 @@ export default function Articles() {
 
       <AdSense className="ad-slot-list" />
 
-      {loading && <p className="empty-state">Loading articles…</p>}
+      {loading && <p className="empty-state loading-pulse">Loading articles…</p>}
       {error && (
         <p className="empty-state" role="alert">
           Could not load articles. Is the backend running on port 8080? ({error})
@@ -31,9 +31,11 @@ export default function Articles() {
 
       {!loading && !error && (
         <div className="card-grid">
-          {articles.map((article) => (
+          {articles.map((article, i) => (
             <PostCard
               key={article.id}
+              index={i}
+              animate
               title={article.title}
               excerpt={article.excerpt}
               author={article.author}

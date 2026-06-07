@@ -1,12 +1,17 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useHeaderScroll } from '../hooks/useHeaderScroll';
+import AnimatedPage from './AnimatedPage';
+import CartoonCursor from './CartoonCursor';
 import Footer from './Footer';
 
 export default function Layout() {
   const { isAuthenticated, isAdmin, logout, user } = useAuth();
+  useHeaderScroll();
 
   return (
     <div className="app-shell">
+      <CartoonCursor />
       <header className="site-header">
         <div className="header-inner">
           <NavLink to="/" className="brand">
@@ -50,7 +55,9 @@ export default function Layout() {
       </header>
 
       <main className="site-main">
-        <Outlet />
+        <AnimatedPage>
+          <Outlet />
+        </AnimatedPage>
       </main>
 
       <Footer />

@@ -33,7 +33,7 @@ export default function ArticleDetail() {
   if (loading) {
     return (
       <div className="page">
-        <p className="empty-state">Loading article…</p>
+        <p className="empty-state loading-pulse">Loading article…</p>
       </div>
     );
   }
@@ -48,7 +48,7 @@ export default function ArticleDetail() {
   }
 
   return (
-    <article className="page detail-page">
+    <article className="page detail-page detail-enter">
       <Link to="/articles" className="back-link">
         ← Back to articles
       </Link>
